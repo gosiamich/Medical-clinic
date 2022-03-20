@@ -1,0 +1,20 @@
+{% extends 'doctor_app/base.html' %}
+{% block zawartosc %}
+    <b>{{ message }}</b>
+    </br>
+    </br>
+     <table>
+  <tr>
+      <th> <i></i>SPECIALIST</i> </th>
+      <th> SPECIALIZATION </th>
+      {% for obj in object_list %}
+  </tr>
+    <th>
+        <a href="#">{{ obj }}</a>
+    </th>
+          <th> {{ obj.specialization }}</th>
+  </tr>
+         {% endfor %}
+</table>
+{% endblock %}
+

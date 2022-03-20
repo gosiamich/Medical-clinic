@@ -1,0 +1,51 @@
+
+{#<div id="viewport">#}
+  <!-- Sidebar -->
+<div id="sidebar" xmlns="http://www.w3.org/1999/html">
+    <header>
+      <a href="{% url 'index' %}">Medical Application</a>
+    </header>
+    <div id="li_a">
+      <ul>
+{#          <li><a href="#">Specialists</a></li>#}
+{#          <li><a href="#">Clinics - <strong>VISIT FORM</strong></a></li>#}
+          <li><a href="{% url 'p_registration' %}">Patient REGISTRATION FORM</a></li>
+{#          <li><a href="#">Patients(admin)</a></li>#}
+{#          <li><a href="#">Schedules(admin)</a></li>#}
+          <li><a href="{%  url 'add_appointment' %}">Add appointment</a></li>
+          <li><a href="{%  url 'list_clinics' %}">CLINICS</a></li>
+          <li><a href="{%  url 'list_patients' %}">PATIENTS</a></li>
+          <li><a href="{%  url 'list_specialists' %}">Specialists</a></li>
+          <li><a href="{%  url 'list_schedules' %}">Schedules</a></li>
+{#          <li><a href="#">List of visits(admin)</a></li>#}
+          <li><a href="/admin/">ADMIN</a></li>
+
+          <li>{% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">LOGOUT</a>
+          {% else %}
+                <p><strong><a href="{% url 'login' %}">LOGIN</a></strong></p>
+              <p><a href="{% url 'u_registration' %}">User registration</a></p>
+          {% endif %} </li>
+
+
+          </ul>
+      <h3>  {{ date }}</h3>
+    </div>
+  </div>
+
+  <div id="content">
+     <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="#"><i class="zmdi zmdi-notifications text-danger"></i>
+            </a>
+          </li>
+{#          <li id="login"><a href="#"><button>LOGIN</button></a></li>#}
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid">
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+/*------------------------------*/
+/*---- Main style ----*/
+/*------------------------------*/
+:root {
+  --link-color: #ff6600;
+  --light-link-color: #fffffa;
+  --background-color: #4b4c4a;
+  --lighter-background-color: #5a615f;
+  --lighter-text-color: #9fa292;
+  --dark-text: #000000;
+  --blue: #007bff;
+  --yellow: #ffc107;
+  --green: #1e7e34;
+  font-size: 16px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+body {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  background: repeat url("/static/images/image.png");
+}
+
+p {
+  font-size: 1.2rem;
+}
+
+.topnavv {
+    overflow: hidden;
+    background-color:#04AA6D;
+}
+
+.topnav a {
+    float: left;
+    color: #205067;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.bg-light {
+background: #EAEAEA;
+}
+.page-header {
+  background: var(--background-color);
+}
+
+.nav-link {
+  color: var(--light-link-color)!important;
+  font-size: 1.1rem;
+}
+
+.bg-light {
+background: #EAEAEA;
+}
+
+.footer {
+    background: #ff6600;
+    height:40px;
+    width:auto;
+    position:absolute;
+    bottom:0;
+}

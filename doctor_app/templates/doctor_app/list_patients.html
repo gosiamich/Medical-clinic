@@ -1,0 +1,37 @@
+{% extends 'doctor_app/base.html' %}
+{% block zawartosc %}
+
+{{ message }}
+
+    <p>PATIENTS:</p>
+   <table>
+  <tr>
+      <th> <i></i>Patient ID</i> </th>
+      <th> First name </th>
+      <th> Last name </th>
+      <th> PESEL </th>
+      <th>GENDER</th>
+      <th>Phone number</th>
+      <th>Addrress</th>
+      <th> Email </th>
+      <th>User name</th>
+      <th>Update</th>
+
+          {% for obj in object_list %}
+  </tr>
+    <th> {{ obj.id }}</th>
+    <th> {{ obj.user.first_name }}</th>
+    <th> {{ obj.user.last_name }}</th>
+    <th> {{ obj.pesel }}</th>
+    <th> {{ obj.gender }}</th>
+    <th> {{ obj.phone_number }}</th>
+    <th> {{ obj.address }}</th>
+    <th> {{ obj.user.email }} </th>
+    <th> {{ obj.user.username }} (id: {{ obj.user.id }}) </th>
+    <th><a href="{{ obj.get_update_url }}">Update {{ obj.name }}</a>}}</th>
+
+  </tr>
+         {% endfor %}
+
+</table>
+{% endblock %}

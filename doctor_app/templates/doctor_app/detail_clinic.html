@@ -1,0 +1,19 @@
+{% extends 'doctor_app/base.html' %}
+{% block zawartosc %}
+
+      <h1> Details aboute clinic</h1>
+{{ message }}
+  <h3><strong>Name:</strong> {{clinic.name}}</h3>
+  <p><strong>Phone number:</strong> {{ clinic.phone_number}}</p>
+  <p><strong>Email:</strong> {{ clinic.email}}</p>
+  <p><i>Address:</i></p>
+  <p><strong>Street:</strong> {{ clinic.address.street}}</p>
+  <p><strong>Building number:</strong> {{ clinic.address.building_number}}</p>
+  <p><strong>City:</strong> {{ clinic.address.city}}</p>
+  <p><strong>Postcode:</strong> {{ clinic.address.postcode}}</p>
+   <p><strong>Specialists working in this clinic:</strong>
+      {%  for spec in clinic.set_spec %}
+       <li><a>{{ spec }}</a></li>
+    {% endfor %}
+    </p>
+{% endblock %}
