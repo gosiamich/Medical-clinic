@@ -109,8 +109,8 @@ class Appointment(models.Model):
     specialist = models.ForeignKey(Specialist, on_delete=models.CASCADE)
     type = models.ForeignKey(Type, on_delete=models.CASCADE)
     a_date = models.DateField()
-    a_to = models.TimeField(null=True, blank=True)
-    a_from = models.TimeField()
+    a_time = models.TimeField()
+    a_date_time = models.DateTimeField(null=True, blank=True)
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
 
 

@@ -56,45 +56,29 @@ class AddAppointmentView(View):
         if form.is_valid():
             clinic = form.cleaned_data['clinic']
             specialist = form.cleaned_data['specialist']
+            # day_and_time = form.cleaned_data['day_and_time']
             a_date = form.cleaned_data['a_date']
-            a_from = form.cleaned_data['a_from']
+            a_time = form.cleaned_data['a_time']
             # a_to = form.cleaned_data['a_to']
             type = form.cleaned_data['type']
             user = User.objects.get(pk=request.user.id)
             patient_id = user.patient.id
-            if Schedule.objects.filter(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday(), \
-                                       sch_from__lte=(a_from - datetime.timedelta(minutes=30)), \
-                                       sch_from__gte=(a_from + datetime.timedelta(minutes=30))):
-                return render(request, 'doctor_app/form.html', {'form': form, 'message': f'lekarz wtym termnie nie pracuej'})
+            schedule = Schedule.objects.filter(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday(), \
+                                           sch_from__lte=a_time, sch_to__gt=a_time)
+            if not schedule:
+                schedule = Schedule.objects.get(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday())
+                return render(request, 'doctor_app/form.html',
+                              {'form': form, 'message': f'{schedule.specialist} {a_date} przyjmuje od {schedule.sch_from} do {schedule.sch_to}'})
+            else:
+                if len(Appointment.objects.filter(a_date=a_date, a_time=a_time, specialist=specialist)) > 0:
+                    list_busy_time =[]
+                    for a in Appointment.objects.filter(a_date=a_date, specialist=specialist):
+                        list_busy_time.append(a.a_time)
+                    return render(request, 'doctor_app/form.html', {'form': form,'message': f'{specialist} {a_date} ma zajęte godziny: {list_busy_time}'})
+                else:
+                    Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,patient_id =patient_id, type=type)
+                    return render(request, "doctor_app/index.html", {'message':f'brawo wizyta zarezerwowana'})
         return render(request, 'doctor_app/form.html', {'form': form})
-
-    #         powyżej sprawdzam czy danego dnia wdanej godiznie lekarz pracuje
-    #         # a = Appointment.objects.create(a_date=date, a_from=a_from, a_to=a_to, \
-    #         #                                patient_id=patient_id, specialist=specialist, type=type)
-    #         #  a.weekday_from_date() - zwraca numer dnia tygodnia
-
-    #         appointment_list = list(Appointment.objects.\
-    #                 filter(a_date__gte=a_date - datetime.timedelta(hours=1)).\
-    #                 filter(datetime__lte=form.cleaned_data['datetime'] +datetime.timedelta(hours=1)).\
-    #                 filter(doctor=form.cleaned_data['doctor']))
-    #         if appointment_list:
-    #             messages.error(request, "Doctor is busy during this time.")
-    #             return render(request, 'app/appointment/appointment.haml', {'form': form})
-    #         else:
-    #             appointment = form.save(commit=False)
-    #             patient = Patient.objects.get(user__id=request.user.id)
-    #             appointment.patient = patient
-    #             appointment.save()
-    #             return HttpResponseRedirect(reverse('app:patient', args=(request.user.id,)))
-    #     else:
-    #         return render(request, 'app/appointment/appointment.haml', {'form': form})
-
-
-
-
-
-
-
 
 
 class ListViewPatient(ListView):
@@ -120,6 +104,7 @@ class ListViewClinic(ListView):
         context['message'] = 'List of Clinics:.'
         return context
 
+
 class ListViewSpecialist(ListView):
     model = Specialist
     template_name = 'doctor_app/list_specialists.html'
@@ -136,9 +121,11 @@ class ListViewSchedule(ListView):
     model = Schedule
     template_name = 'doctor_app/list_schedules.html'
 
+
 class DetailViewClinic(DetailView):
     model = Clinic
     template_name = 'doctor_app/detail_clinic.html'
+
 
 class UpdateViewClinic(UpdateView):
     model = Clinic
