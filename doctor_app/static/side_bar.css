@@ -19,7 +19,7 @@ body {
 #content {
   width: 100%;
   position: relative;
-  margin-left: 400px;
+  margin-left: 300px;
 }
 
 /* Sidebar Styles */
@@ -100,6 +100,6 @@ li {
 table, th, td {
   font-size: 15px;
   padding: 10px 20px;
-  border: 1px solid black;
+  border: 1px solid green;
   border-collapse: collapse;
 }

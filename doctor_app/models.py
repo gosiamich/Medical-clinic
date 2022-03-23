@@ -113,16 +113,12 @@ class Appointment(models.Model):
     a_date_time = models.DateTimeField(null=True, blank=True)
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
 
-
-
-    #  w contex formularz Model.form dla appointment + do wybrou Clinic
-    def Clinic(self):
-
-        pass
-
-
     def weekday_from_date(self):
         return self.a_date.isoweekday()
+
+    def get_delete_url(self):
+        return f'/delete_appointment/{self.id}/'
+
 
 
 TIME_SLOT = (

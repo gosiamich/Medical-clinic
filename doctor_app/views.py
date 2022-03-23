@@ -1,20 +1,24 @@
 import datetime
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 
 from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm
 from accounts.forms import CreateUserForm
 from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist
+from django.contrib.auth.models import User
 
 
 class Index(View):
     def get(self, request):
-        return render(request, "doctor_app/index.html", )
+        message = f'Witaj Internauto!!'
+        return render(request, "doctor_app/index.html", {'message': message})
 
 
 class PatientRegistrationView(View):
@@ -45,7 +49,7 @@ class PatientRegistrationView(View):
                       {'form': form, 'patient_form': patient_form, 'address_form': address_form})
 
 
-class AddAppointmentView(View):
+class AddAppointmentView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = AddAppointmentForm()
@@ -64,20 +68,23 @@ class AddAppointmentView(View):
             user = User.objects.get(pk=request.user.id)
             patient_id = user.patient.id
             schedule = Schedule.objects.filter(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday(), \
-                                           sch_from__lte=a_time, sch_to__gt=a_time)
+                                               sch_from__lte=a_time, sch_to__gt=a_time)
             if not schedule:
                 schedule = Schedule.objects.get(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday())
                 return render(request, 'doctor_app/form.html',
-                              {'form': form, 'message': f'{schedule.specialist} {a_date} przyjmuje od {schedule.sch_from} do {schedule.sch_to}'})
+                              {'form': form,
+                               'message': f'{schedule.specialist} {a_date} przyjmuje od {schedule.sch_from} do {schedule.sch_to}'})
             else:
                 if len(Appointment.objects.filter(a_date=a_date, a_time=a_time, specialist=specialist)) > 0:
-                    list_busy_time =[]
+                    list_busy_time = []
                     for a in Appointment.objects.filter(a_date=a_date, specialist=specialist):
                         list_busy_time.append(a.a_time)
-                    return render(request, 'doctor_app/form.html', {'form': form,'message': f'{specialist} {a_date} ma zajęte godziny: {list_busy_time}'})
+                    return render(request, 'doctor_app/form.html', {'form': form,
+                                                                    'message': f'{specialist} {a_date} ma zajęte godziny: {list_busy_time}'})
                 else:
-                    Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,patient_id =patient_id, type=type)
-                    return render(request, "doctor_app/index.html", {'message':f'brawo wizyta zarezerwowana'})
+                    Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
+                                               patient_id=patient_id, type=type)
+                    return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
         return render(request, 'doctor_app/form.html', {'form': form})
 
 
@@ -122,6 +129,11 @@ class ListViewSchedule(ListView):
     template_name = 'doctor_app/list_schedules.html'
 
 
+class ListViewAppointment(ListView):
+    model = Appointment
+    template_name = 'doctor_app/list_appointments.html'
+
+
 class DetailViewClinic(DetailView):
     model = Clinic
     template_name = 'doctor_app/detail_clinic.html'
@@ -132,3 +144,7 @@ class UpdateViewClinic(UpdateView):
     fields = ['name', 'phone_number', 'email']
     success_url = reverse_lazy('list_clinics')
     template_name = 'doctor_app/form.html'
+
+class DeleteViewAppointment(DeleteView):
+    model = Appointment
+    success_url = '/list_appointments/'

@@ -7,17 +7,14 @@
     </header>
     <div id="li_a">
       <ul>
-{#          <li><a href="#">Specialists</a></li>#}
-{#          <li><a href="#">Clinics - <strong>VISIT FORM</strong></a></li>#}
+         <li><h4>Witaj {{ user.first_name }} {{ user.last_name }}</h4>
           <li><a href="{% url 'p_registration' %}">Patient REGISTRATION FORM</a></li>
-{#          <li><a href="#">Patients(admin)</a></li>#}
-{#          <li><a href="#">Schedules(admin)</a></li>#}
           <li><a href="{%  url 'add_appointment' %}">Add appointment</a></li>
           <li><a href="{%  url 'list_clinics' %}">CLINICS</a></li>
           <li><a href="{%  url 'list_patients' %}">PATIENTS</a></li>
           <li><a href="{%  url 'list_specialists' %}">Specialists</a></li>
           <li><a href="{%  url 'list_schedules' %}">Schedules</a></li>
-{#          <li><a href="#">List of visits(admin)</a></li>#}
+          <li><a href="{%  url 'list_appointments' %}">Appointments</a></li>
           <li><a href="/admin/">ADMIN</a></li>
 
           <li>{% if user.is_authenticated %}

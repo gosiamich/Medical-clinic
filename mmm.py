@@ -9,8 +9,10 @@ dt = datetime(2022, 3, 25, 10, 00, 00).date()
 
 # sch_from__lte=(a_from - datetime.timedelta(minutes=30)),
 
+now = datetime.now().time()
 #
 #
 # dt= datetime.time(10, 00, 10)-datetime.timedelta(minutes=30)
 #
 print(dt)
+print(now)

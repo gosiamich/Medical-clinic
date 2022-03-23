@@ -31,11 +31,11 @@ def ckeck_weekday(a_date):
         raise ValidationError("Clinic is open from Monday to Friday")
 
 
-def check_time(day_and_time):
-    if day_and_time < datetime.time(10, 00, 00):
-        raise ValidationError("Clinic starts at 10:00")
-    if day_and_time > datetime.time(18, 00, 00):
-        raise ValidationError("Clinic ends at 18:00")
+# def check_time(day_and_time):
+#     if day_and_time < datetime.time(10, 00, 00):
+#         raise ValidationError("Clinic starts at 10:00")
+#     if day_and_time > datetime.time(18, 00, 00):
+#         raise ValidationError("Clinic ends at 18:00")
 
 
 class AddAppointmentForm(forms.Form):
@@ -53,15 +53,17 @@ class AddAppointmentForm(forms.Form):
                              widget=forms.DateInput(attrs={'type': 'date', }))
     a_time = forms.TimeField(label='Time:', \
                              help_text='Clinic hours 10-18', \
-                             validators=[check_time, ], \
                              widget=forms.DateInput(
                                  attrs={'type': 'time', 'min': '10:00', 'max': '18:00', 'step': '1800'}, ))
 
     type = forms.ModelChoiceField(queryset=Type.objects.all())
 
-    #
-    # def clean(self):
-    #     data = super().clean()
-    #     errors = []
-    #     if data['a_date'] < datetime.date.today():
-    #         errors.append('invalid date')
+    def clean(self):
+        data = super().clean()
+        if data['a_date'] == datetime.date.today() and data['a_time'] < datetime.datetime.now().time():
+            raise forms.ValidationError('podaj godzinę późnejszą niz aktualna!')
+
+
+
+
+

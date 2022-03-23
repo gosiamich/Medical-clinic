@@ -21,7 +21,7 @@ class LoginView(View):
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
-                redirect_url = request.GET.get('next', 'index')
+                redirect_url = request.GET.get('next', '/')
                 return redirect(redirect_url)
         return render(request, 'doctor_app/form.html', {'form': form, 'message':'Try again..'})
 
@@ -29,7 +29,7 @@ class LoginView(View):
 class LogOut(View):
     def get(self, request):
         logout(request)
-        return redirect('index')
+        return redirect('/')
 
 class RegistrationView(View):
 

@@ -18,12 +18,13 @@ from django.urls import path
 from doctor_app.views import Index
 from accounts.views import LoginView, LoginForm, LogOut, RegistrationView
 from doctor_app.views import PatientRegistrationView, AddAppointmentView, ListViewPatient, \
-    ListViewClinic, ListViewSpecialist, DetailViewClinic, UpdateViewClinic, ListViewSchedule
+    ListViewClinic, ListViewSpecialist, DetailViewClinic, UpdateViewClinic, ListViewSchedule,\
+    ListViewAppointment, DeleteViewAppointment
 
 urlpatterns = [
     path('admin/', admin.site.urls, name= 'admin'),
-    path('index/', Index.as_view(), name= 'index'),
-    path("login/", LoginView.as_view(), name='login'),
+    path('', Index.as_view(), name= 'index'),
+    path("accounts/login/", LoginView.as_view(), name='login'),
     path("logout/", LogOut.as_view(), name='logout'),
     path("registration/", RegistrationView.as_view(), name='u_registration'),
     path("pregistration/", PatientRegistrationView.as_view(), name='p_registration'),
@@ -33,5 +34,7 @@ urlpatterns = [
     path('list_specialists/', ListViewSpecialist.as_view(), name='list_specialists'),
     path('detail_clinic/<int:pk>/', DetailViewClinic.as_view(), name='detail_clinic'),
     path('update_clinic/<int:pk>/', UpdateViewClinic.as_view(), name='update_clinic'),
-    path('list_schedules/', ListViewSchedule.as_view(), name='list_schedules')
+    path('list_schedules/', ListViewSchedule.as_view(), name='list_schedules'),
+    path('list_appointments/', ListViewAppointment.as_view(), name='list_appointments'),
+    path('delete_appointment/<int:pk>/', DeleteViewAppointment.as_view(), name='delete_appointment')
 ]

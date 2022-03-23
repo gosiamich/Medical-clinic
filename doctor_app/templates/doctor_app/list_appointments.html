@@ -1,0 +1,32 @@
+{% extends 'doctor_app/base.html' %}
+{% block zawartosc %}
+
+{{ message }}
+
+    <p>APPOINTMENTS:</p>
+   <table>
+  <tr>
+      <th> Date</th>
+      <th> Time </th>
+      <th> Patient </th>
+      <th>Specialist</th>
+      <th>Type</th>
+      <th>Clinic</th>
+      <th>Update</th>
+      <th>Delete</th>
+
+          {% for obj in object_list %}
+  </tr>
+    <th> {{ obj.a_date}}</th>
+    <th> {{ obj.a_time}}</th>
+    <th> {{ obj.patient }}</th>
+    <th> {{ obj.specialist }}</th>
+    <th> {{ obj.type }}</th>
+    <th> {{ obj.clinic }}</th>
+    <th></th>
+    <th><a href="{{ obj.get_delete_url }}">Delete </a></th>
+  </tr>
+         {% endfor %}
+
+</table>
+{% endblock %}
