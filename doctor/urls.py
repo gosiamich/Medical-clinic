@@ -19,7 +19,8 @@ from doctor_app.views import Index
 from accounts.views import LoginView, LoginForm, LogOut, RegistrationView
 from doctor_app.views import PatientRegistrationView, AddAppointmentView, ListViewPatient, \
     ListViewClinic, ListViewSpecialist, DetailViewClinic, UpdateViewClinic, ListViewSchedule,\
-    ListViewAppointment, DeleteViewAppointment
+    ListViewAppointment, DeleteViewAppointment, CreateViewSchedule, UpdateViewSchedule, DeleteViewSchedule
+
 
 urlpatterns = [
     path('admin/', admin.site.urls, name= 'admin'),
@@ -36,5 +37,8 @@ urlpatterns = [
     path('update_clinic/<int:pk>/', UpdateViewClinic.as_view(), name='update_clinic'),
     path('list_schedules/', ListViewSchedule.as_view(), name='list_schedules'),
     path('list_appointments/', ListViewAppointment.as_view(), name='list_appointments'),
-    path('delete_appointment/<int:pk>/', DeleteViewAppointment.as_view(), name='delete_appointment')
+    path('delete_appointment/<int:pk>/', DeleteViewAppointment.as_view(), name='delete_appointment'),
+    path('create_schedule/', CreateViewSchedule.as_view(), name='create_schedule'),
+    path('update_schedule/<int:pk>/',UpdateViewSchedule.as_view(), name='update_schedule'),
+    path('delete_schedule/<int:pk>/', DeleteViewSchedule.as_view(), name='delete_schdule')
 ]

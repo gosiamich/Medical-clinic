@@ -1,13 +1,13 @@
 import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 
 from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm
 from accounts.forms import CreateUserForm
@@ -49,6 +49,17 @@ class PatientRegistrationView(View):
                       {'form': form, 'patient_form': patient_form, 'address_form': address_form})
 
 
+class CreateViewSchedule(CreateView):
+    model = Schedule
+    fields = '__all__'
+    success_url = reverse_lazy('list_schedules')
+    template_name = 'doctor_app/create_schedule.html'
+    #
+    # def form_valid(self, form):
+    #     form.instance.specialist = self.request.user
+    #     return super().form_valid(form)
+
+
 class AddAppointmentView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -70,10 +81,11 @@ class AddAppointmentView(LoginRequiredMixin, View):
             schedule = Schedule.objects.filter(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday(), \
                                                sch_from__lte=a_time, sch_to__gt=a_time)
             if not schedule:
-                schedule = Schedule.objects.get(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday())
+                # schedule = Schedule.objects.get(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday())
                 return render(request, 'doctor_app/form.html',
                               {'form': form,
-                               'message': f'{schedule.specialist} {a_date} przyjmuje od {schedule.sch_from} do {schedule.sch_to}'})
+                               'message': f'W tym termnie nie ma wskazanego specjalisty. '})
+                                   # f'{schedule.specialist} {a_date} przyjmuje od {schedule.sch_from} do {schedule.sch_to}'})
             else:
                 if len(Appointment.objects.filter(a_date=a_date, a_time=a_time, specialist=specialist)) > 0:
                     list_busy_time = []
@@ -88,7 +100,7 @@ class AddAppointmentView(LoginRequiredMixin, View):
         return render(request, 'doctor_app/form.html', {'form': form})
 
 
-class ListViewPatient(ListView):
+class ListViewPatient(LoginRequiredMixin, ListView):
     model = Patient
     template_name = 'doctor_app/list_patients.html'
 
@@ -129,7 +141,7 @@ class ListViewSchedule(ListView):
     template_name = 'doctor_app/list_schedules.html'
 
 
-class ListViewAppointment(ListView):
+class ListViewAppointment(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = 'doctor_app/list_appointments.html'
 
@@ -145,6 +157,23 @@ class UpdateViewClinic(UpdateView):
     success_url = reverse_lazy('list_clinics')
     template_name = 'doctor_app/form.html'
 
-class DeleteViewAppointment(DeleteView):
+
+class UpdateViewSchedule(UpdateView):
+    model = Schedule
+    fields = '__all__'
+    success_url = reverse_lazy('list_schedules')
+    template_name = 'doctor_app/form.html'
+
+
+class DeleteViewSchedule(PermissionRequiredMixin, DeleteView):
+    permission_required = ['doctor_app.delete_schedule']
+    model = Schedule
+    success_url = '/list_schedules/'
+
+class SuperuserRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+class DeleteViewAppointment(SuperuserRequiredMixin, DeleteView):
     model = Appointment
     success_url = '/list_appointments/'

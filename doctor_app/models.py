@@ -93,6 +93,12 @@ class Schedule(models.Model):
     sch_from = models.TimeField()
     sch_to = models.TimeField()
 
+    def get_update_url(self):
+        return f'/update_schedule/{self.id}/'
+
+    def get_delete_url(self):
+        return f'/delete_schedule/{self.id}/'
+
     class Meta:
         unique_together = ['specialist', 'clinic', 'day_of_week']
 
@@ -118,6 +124,9 @@ class Appointment(models.Model):
 
     def get_delete_url(self):
         return f'/delete_appointment/{self.id}/'
+
+    class Meta:
+        unique_together = ['specialist', 'a_date', 'a_time', 'clinic']
 
 
 
