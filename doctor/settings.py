@@ -75,15 +75,6 @@ WSGI_APPLICATION = 'doctor.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'HOST': '127.0.0.1',
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'doctor_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'coderslab',
-#     }
-# }
 
 try:
     from doctor.local_settings import DATABASES
