@@ -75,17 +75,22 @@ WSGI_APPLICATION = 'doctor.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'HOST': '127.0.0.1',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'doctor_db',
-        'USER': 'postgres',
-        'PASSWORD': 'coderslab',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'HOST': '127.0.0.1',
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'doctor_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'coderslab',
+#     }
+# }
 
-
+try:
+    from doctor.local_settings import DATABASES
+except ModuleNotFoundError:
+    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
+    print("Uzupełnij dane i spróbuj ponownie!")
+    exit(0)
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
