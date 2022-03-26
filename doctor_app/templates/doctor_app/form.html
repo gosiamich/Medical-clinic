@@ -4,6 +4,8 @@
      {% csrf_token %}
         <strong> {{ message }} </strong>
     {{ form.as_p }}
+    {{ model_form.as_p }}
+    {{ address_form.as_p }}
     <input type="submit">
     </form>
 {% endblock %}

@@ -1,16 +1,13 @@
 {% extends 'doctor_app/base.html' %}
 {% block zawartosc %}
-   <p><strong>{{ message }}</strong></p>
+   <p><strong>List of clinics:</strong></p>
     <ul>
     {% for obj in object_list %}
         <li>
-            <p><a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a> - {{ obj.address }}</p>
-            <a href="{{ obj.get_update_url }}">Modyfikacja</a>
-{#            <a href="{{ obj.get_test_url }}">Make an appoointment to {{ obj.name }}</a>#}
-
+            <p><a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a> - {{ obj.address }}
+                <a href="{{ obj.get_update_url }}">Update clinic</a> </p>
         </li>
-
     {% endfor %}
     </ul>
-
+    <p><a href="{%  url 'create_clinic' %}">Create new clinic</a></p>
 {% endblock %}

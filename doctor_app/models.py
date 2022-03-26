@@ -72,7 +72,7 @@ class Clinic(models.Model):
         return reverse('detail_clinic', args=(self.id,))
 
     def get_update_url(self):
-        return f'/update_clinic/{self.id}/'
+        return f'/modify_clinic/{self.id}/'
 
     def set_spec(self):
         return set(self.specialists.all())
@@ -91,8 +91,8 @@ class Schedule(models.Model):
     specialist = models.ForeignKey(Specialist, on_delete=models.CASCADE)
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
     day_of_week = models.IntegerField(choices=WEEK_DAY)
-    sch_from = models.TimeField()
-    sch_to = models.TimeField()
+    sch_from = models.TimeField(verbose_name='Time from')
+    sch_to = models.TimeField(verbose_name='Time to')
 
     def get_update_url(self):
         return f'/update_schedule/{self.id}/'

@@ -10,7 +10,7 @@
       {% for obj in object_list %}
   </tr>
     <th>
-        <a href="#">{{ obj }}</a>
+        <a href="{% url 'modify_specialist' %}">{{ obj }}</a>
     </th>
           <th> {{ obj.specialization }}</th>
   </tr>

@@ -7,7 +7,10 @@
     </header>
     <div id="li_a">
       <ul>
-         <li><h4>Witaj {{ user.first_name }} {{ user.last_name }}</h4>
+          <li>
+              <h4>Witaj {{ user.first_name }} {{ user.last_name }}</h4>
+            <a href="{% url 'modify_user' %}">Modify user</a></li>
+          </li>
           <li><a href="{% url 'p_registration' %}">Patient REGISTRATION FORM</a></li>
           <li><a href="{%  url 'add_appointment' %}">Add appointment</a></li>
           <li><a href="{%  url 'list_clinics' %}">CLINICS</a></li>
@@ -16,6 +19,7 @@
           <li><a href="{%  url 'list_schedules' %}">Schedules</a></li>
           <li><a href="{%  url 'list_appointments' %}">Appointments</a></li>
           <li><a href="{%  url 'create_schedule' %}">New schedule</a></li>
+          <li><a href="{%  url 'create_specialist' %}">New specialist</a></li>
           <li><a href="/admin/">ADMIN</a></li>
 
           <li>{% if user.is_authenticated %}

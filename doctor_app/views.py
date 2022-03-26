@@ -9,9 +9,10 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 
-from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm
+from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm, CreateSpecialistForm, \
+    CreateClinicForm
 from accounts.forms import CreateUserForm
-from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist
+from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist, Address
 from django.contrib.auth.models import User
 
 
@@ -21,32 +22,86 @@ class Index(View):
         return render(request, "doctor_app/index.html", {'message': message})
 
 
+class SuperuserRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
 class PatientRegistrationView(View):
 
     def get(self, request):
         form = CreateUserForm()
-        patient_form = CreatePatientForm()
+        model_form = CreatePatientForm()
         address_form = CreateAddressForm()
-        return render(request, 'doctor_app/registration.html',
-                      {'form': form, 'patient_form': patient_form, 'address_form': address_form})
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form,\
+                       'address_form': address_form, 'message': 'Register as a Patient'})
 
     def post(self, request):
         form = CreateUserForm(request.POST)
-        patient_form = CreatePatientForm(request.POST)
+        model_form = CreatePatientForm(request.POST)
         address_form = CreateAddressForm(request.POST)
-        if form.is_valid() and patient_form.is_valid() and address_form.is_valid():
+        if form.is_valid() and model_form.is_valid() and address_form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
             address = address_form.save()
-            patient = patient_form.save(commit=False)
+            patient = model_form.save(commit=False)
             patient.user = user
             patient.address = address
             patient.save()
             message = f'Thank Yoy for registration. Now You can make an appointment'
             return render(request, 'doctor_app/index.html', {'message': message})
-        return render(request, 'doctor_app/registration.html',
-                      {'form': form, 'patient_form': patient_form, 'address_form': address_form})
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form, 'address_form': address_form})
+
+
+class CreateSpecialistView(SuperuserRequiredMixin, View):
+    def get(self, request):
+        form = CreateUserForm()
+        model_form = CreateSpecialistForm()
+        address_form = CreateAddressForm()
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form, \
+                       'address_form': address_form, 'message': 'CREATE NEW SPECIALIST:'})
+
+    def post(self, request):
+        form = CreateUserForm(request.POST)
+        model_form = CreateSpecialistForm(request.POST)
+        address_form = CreateAddressForm(request.POST)
+        if form.is_valid() and model_form.is_valid() and address_form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            address = address_form.save()
+            specialist = model_form.save(commit=False)
+            specialist.user = user
+            specialist.address = address
+            specialist.save()
+            return redirect('list_specialists')
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form, 'address_form': address_form})
+
+
+class CreateClinicView(SuperuserRequiredMixin, View):
+    def get(self, request):
+        model_form = CreateClinicForm()
+        address_form = CreateAddressForm()
+        return render(request, 'doctor_app/form.html',
+                      {'model_form': model_form, \
+                       'address_form': address_form, 'message': 'CREATE NEW CLINIC:'})
+
+    def post(self, request):
+        model_form = CreateClinicForm(request.POST)
+        address_form = CreateAddressForm(request.POST)
+        if model_form.is_valid() and address_form.is_valid():
+            address = address_form.save()
+            clinic = model_form.save(commit=False)
+            clinic.address = address
+            clinic.save()
+            return redirect('list_clinics')
+        return render(request, 'doctor_app/form.html',
+                      {'model_form': model_form, 'address_form': address_form, 'message': 'Try again (NEW CLINIC)' })
 
 
 class CreateViewSchedule(CreateView):
@@ -54,10 +109,6 @@ class CreateViewSchedule(CreateView):
     fields = '__all__'
     success_url = reverse_lazy('list_schedules')
     template_name = 'doctor_app/create_schedule.html'
-    #
-    # def form_valid(self, form):
-    #     form.instance.specialist = self.request.user
-    #     return super().form_valid(form)
 
 
 class AddAppointmentView(LoginRequiredMixin, View):
@@ -71,32 +122,14 @@ class AddAppointmentView(LoginRequiredMixin, View):
         if form.is_valid():
             clinic = form.cleaned_data['clinic']
             specialist = form.cleaned_data['specialist']
-            # day_and_time = form.cleaned_data['day_and_time']
             a_date = form.cleaned_data['a_date']
             a_time = form.cleaned_data['a_time']
-            # a_to = form.cleaned_data['a_to']
             type = form.cleaned_data['type']
             user = User.objects.get(pk=request.user.id)
             patient_id = user.patient.id
-            schedule = Schedule.objects.filter(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday(), \
-                                               sch_from__lte=a_time, sch_to__gt=a_time)
-            if not schedule:
-                # schedule = Schedule.objects.get(clinic=clinic, specialist=specialist, day_of_week=a_date.isoweekday())
-                return render(request, 'doctor_app/form.html',
-                              {'form': form,
-                               'message': f'W tym termnie nie ma wskazanego specjalisty. '})
-                                   # f'{schedule.specialist} {a_date} przyjmuje od {schedule.sch_from} do {schedule.sch_to}'})
-            else:
-                if len(Appointment.objects.filter(a_date=a_date, a_time=a_time, specialist=specialist)) > 0:
-                    list_busy_time = []
-                    for a in Appointment.objects.filter(a_date=a_date, specialist=specialist):
-                        list_busy_time.append(a.a_time)
-                    return render(request, 'doctor_app/form.html', {'form': form,
-                                                                    'message': f'{specialist} {a_date} ma zajęte godziny: {list_busy_time}'})
-                else:
-                    Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
+            Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
                                                patient_id=patient_id, type=type)
-                    return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
+            return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
         return render(request, 'doctor_app/form.html', {'form': form})
 
 
@@ -115,13 +148,6 @@ class ListViewPatient(LoginRequiredMixin, ListView):
 class ListViewClinic(ListView):
     model = Clinic
     template_name = 'doctor_app/list_clinics.html'
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get the context
-        context = super(ListViewClinic, self).get_context_data(**kwargs)
-        # Create any data and add it to the context
-        context['message'] = 'List of Clinics:.'
-        return context
 
 
 class ListViewSpecialist(ListView):
@@ -151,11 +177,87 @@ class DetailViewClinic(DetailView):
     template_name = 'doctor_app/detail_clinic.html'
 
 
-class UpdateViewClinic(UpdateView):
-    model = Clinic
-    fields = ['name', 'phone_number', 'email']
-    success_url = reverse_lazy('list_clinics')
-    template_name = 'doctor_app/form.html'
+class ModifyUserPatientFORM(LoginRequiredMixin, View):
+    # only Patient may change its own data
+    def get(self, request):
+        user = User.objects.get(pk=request.user.id)
+        patient = Patient.objects.get(user=user)
+        model_form = CreatePatientForm(instance = patient)
+        form = CreateUserForm(instance = user)
+        address_form = CreateAddressForm(instance = patient.address)
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form,\
+                       'address_form': address_form, 'message': 'Modify Your date:'})
+
+    def post(self, request):
+        user = User.objects.get(pk=request.user.id)
+        patient = Patient.objects.get(user=user)
+        form = CreateUserForm(request.POST, instance = user)
+        model_form = CreatePatientForm(request.POST, instance=patient)
+        address_form = CreateAddressForm(request.POST, instance= patient.address)
+        if form.is_valid() and model_form.is_valid() and address_form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            address = address_form.save()
+            patient = model_form.save(commit=False)
+            patient.user = user
+            patient.address = address
+            patient.save()
+            return redirect('index')
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
+
+class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
+    permission_required = ['doctor_app.change_specialist']
+    # only Specialist may change its own data
+    def get(self, request):
+        user = User.objects.get(pk=request.user.id)
+        specialist = Specialist.objects.get(user=user)
+        model_form = CreateSpecialistForm(instance = specialist)
+        form = CreateUserForm(instance = user)
+        address_form = CreateAddressForm(instance = specialist.address)
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form,\
+                       'address_form': address_form, 'message': 'Modify Your date:'})
+
+    def post(self, request):
+        user = User.objects.get(pk=request.user.id)
+        specialist = Specialist.objects.get(user=user)
+        form = CreateUserForm(request.POST, instance = user)
+        model_form = CreateSpecialistForm(request.POST, instance=specialist)
+        address_form = CreateAddressForm(request.POST, instance= specialist.address)
+        if form.is_valid() and model_form.is_valid() and address_form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            address = address_form.save()
+            specialist = model_form.save(commit=False)
+            specialist.user = user
+            specialist.address = address
+            specialist.save()
+            return redirect('index')
+        return render(request, 'doctor_app/form.html',
+                      {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
+
+
+class ModifyClinicFORM(SuperuserRequiredMixin, View):
+    def get(self, request, pk):
+        clinic = Clinic.objects.get(id=pk)
+        model_form = CreateClinicForm(instance= clinic)
+        address_form = CreateAddressForm(instance = clinic.address)
+        return render(request, 'doctor_app/form.html',
+                      {'model_form': model_form, 'address_form': address_form, 'message': 'Update CLINIC:'})
+    def post(self, request, pk):
+        clinic = Clinic.objects.get(id=pk)
+        m_form = CreateClinicForm(request.POST, instance = clinic)
+        a_form = CreateAddressForm(request.POST, instance = clinic.address)
+        if m_form.is_valid() and a_form.is_valid():
+            address = a_form.save()
+            clinic = m_form.save(commit=False)
+            clinic.address = address
+            clinic.save()
+            return redirect('list_clinics')
 
 
 class UpdateViewSchedule(UpdateView):
@@ -170,10 +272,20 @@ class DeleteViewSchedule(PermissionRequiredMixin, DeleteView):
     model = Schedule
     success_url = '/list_schedules/'
 
-class SuperuserRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
 
 class DeleteViewAppointment(SuperuserRequiredMixin, DeleteView):
     model = Appointment
     success_url = '/list_appointments/'
+
+
+# class UpdateViewClinic(UpdateView):
+#     model = Clinic
+#     fields = ['name', 'phone_number', 'email']
+#     success_url = reverse_lazy('list_clinics')
+#     template_name = 'doctor_app/form.html'
+
+# class UpdateViewAddress(UpdateView):
+#     model = Address
+#     fields = '__all__'
+#     success_url = reverse_lazy('/')
+#     template_name = 'doctor_app/form.html'

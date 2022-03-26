@@ -2,7 +2,7 @@
 {% block zawartosc %}
     <form method="post">
      {% csrf_token %}
-        <strong> {{ message }} </strong>
+        <strong> Create new schedule: </strong>
     {{ form.as_p }}
     <input type="submit">
     </form>
