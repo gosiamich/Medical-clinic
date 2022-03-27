@@ -209,6 +209,7 @@ class ModifyUserPatientFORM(LoginRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
 
+
 class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
     permission_required = ['doctor_app.change_specialist']
     # only Specialist may change its own data

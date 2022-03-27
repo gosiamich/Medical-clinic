@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import User
 
-from doctor_app.models import Appointment, Clinic, Address, Specialization, Specialist, Schedule, Patient
+from doctor_app.models import Appointment, Clinic, Address, Specialization, Specialist, Schedule, Patient, Type
 
 
 @pytest.fixture
@@ -19,6 +19,10 @@ def superuser():
 @pytest.fixture
 def address():
     return Address.objects.create(city='P', postcode='60-476', street='Dr', building_number='5')
+
+@pytest.fixture
+def type():
+    return Type.objects.create(name='XXX')
 
 @pytest.fixture
 def clinic(address):
@@ -39,9 +43,28 @@ def schedules(clinic, specialist):
     list.append(sch)
     return list
 
+
+@pytest.fixture
+def patient(user2, address):
+    return Patient.objects.create(pesel='5258741258', gender = 'F', phone_number='55',address=address, user = user2 )
+
 @pytest.fixture
 def patients(user2, address):
     list =[]
     pat = Patient.objects.create(pesel='5258741258', gender = 'F', phone_number='55',address=address, user = user2 )
     list.append(pat)
+    return list
+
+@pytest.fixture
+def clinics(address):
+    list =[]
+    clinic = Clinic.objects.create(name='Vision', phone_number='55',address=address, email = 'v@p.pl' )
+    list.append(clinic)
+    return list
+
+@pytest.fixture
+def specialists(address, user2, specialization):
+    list =[]
+    spec = Specialist.objects.create(user=user2, address=address, specialization=specialization,phone_number='5')
+    list.append(spec)
     return list

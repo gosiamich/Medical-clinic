@@ -19,7 +19,7 @@ def test_index():
     assert response.status_code == 200
 
 @pytest.mark.django_db
-def test_registration():
+def test_registration_get():
     client = Client()
     url = reverse('p_registration')
     response = client.get(url)
@@ -47,23 +47,23 @@ def test_add_appointment_login_get(user):
     assert isinstance(response.context['form'], AddAppointmentForm)
 
 @pytest.mark.django_db
-def test_add_appointment_post(user):
+def test_add_appointment_post(user2, patient, clinic, specialist, type):
     client = Client()
-    client.force_login(user)
+    # client.force_login(user2)
     url = reverse('add_appointment')
     date = {
-        'clinic': '1',
+        'clinic': clinic.id,
         'specialist': '1',
         'a_date':'2022-3-28',
         'a_time': '12:30',
-        'type': '1',
-         'patient_id': '1'
+        'type': type.id,
+        'patient': user2.patient.id,
     }
     response = client.post(url, date)
-    assert response.status_code == 200
-    new_url = reverse('index')
-    assert response.url.startswith(new_url)
-    Appointment.objects.get(**date)
+    assert response.status_code == 302
+    # new_url = reverse('index')
+    # assert response.url.startswith(new_url)
+    # Appointment.objects.get(**date)
 
 @pytest.mark.django_db
 def test_CreateSpecialistView_not_login():
@@ -176,8 +176,26 @@ def test_ListViewPatient_login(superuser, patients):
         assert pat in response.context['object_list']
 
 
+@pytest.mark.django_db
+def test_ListViewClinic(clinics):
+    client = Client()
+    url = reverse('list_clinics')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['object_list'].count() == len(clinics)
+    for clinic in clinics:
+        assert clinic in response.context['object_list']
 
 
+@pytest.mark.django_db
+def test_ListViewspecialists(specialists):
+    client = Client()
+    url = reverse('list_specialists')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['object_list'].count() == len(specialists)
+    for spec in specialists:
+        assert spec in response.context['object_list']
 
 
 
