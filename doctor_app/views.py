@@ -104,7 +104,7 @@ class CreateClinicView(SuperuserRequiredMixin, View):
                       {'model_form': model_form, 'address_form': address_form, 'message': 'Try again (NEW CLINIC)' })
 
 
-class CreateViewSchedule(CreateView):
+class CreateViewSchedule(SuperuserRequiredMixin,CreateView):
     model = Schedule
     fields = '__all__'
     success_url = reverse_lazy('list_schedules')
@@ -133,7 +133,8 @@ class AddAppointmentView(LoginRequiredMixin, View):
         return render(request, 'doctor_app/form.html', {'form': form})
 
 
-class ListViewPatient(LoginRequiredMixin, ListView):
+class ListViewPatient(PermissionRequiredMixin, ListView):
+    permission_required = ['doctor_app.view_patient']
     model = Patient
     template_name = 'doctor_app/list_patients.html'
 
@@ -162,7 +163,7 @@ class ListViewSpecialist(ListView):
         return context
 
 
-class ListViewSchedule(ListView):
+class ListViewSchedule(SuperuserRequiredMixin, ListView):
     model = Schedule
     template_name = 'doctor_app/list_schedules.html'
 
@@ -219,7 +220,7 @@ class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
         address_form = CreateAddressForm(instance = specialist.address)
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form,\
-                       'address_form': address_form, 'message': 'Modify Your date:'})
+                       'address_form': address_form, 'message': 'Modify Your data:'})
 
     def post(self, request):
         user = User.objects.get(pk=request.user.id)
