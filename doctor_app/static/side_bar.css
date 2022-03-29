@@ -18,7 +18,7 @@ body {
 
 #content {
   width: 100%;
-  position: relative;
+  position: absolute;
   margin-left: 300px;
 }
 
@@ -43,7 +43,7 @@ body {
 #sidebar header {
   background-color: #003300;
   font-size: 30px;
-  line-height: 52px;
+  line-height: 12px;
   text-align: center;
 }
 
@@ -57,7 +57,24 @@ body {
   color: #fff;
 }
 
+#content .nav{
+    float: right;
+    color: #f2f2f2;
+    text-align: right;
+    padding: 10px 10px;
+    text-decoration: none;
+    font-size: 17px;
+    border: 10px;
+}
+
 #sidebar .nav{
+    float: right;
+    color: #f2f2f2;
+    text-align: right;
+    padding: 15px 15px;
+    text-decoration: none;
+    font-size: 17px;
+    border: 10px;
 }
 
 #sidebar .nav a{
@@ -103,3 +120,4 @@ table, th, td {
   border: 1px solid green;
   border-collapse: collapse;
 }
+

@@ -20,7 +20,8 @@ from accounts.views import LoginView, LoginForm, LogOut, RegistrationView
 from doctor_app.views import PatientRegistrationView, AddAppointmentView, ListViewPatient, \
     ListViewClinic, ListViewSpecialist, DetailViewClinic, ListViewSchedule,\
     ListViewAppointment, DeleteViewAppointment, CreateViewSchedule, UpdateViewSchedule, DeleteViewSchedule,\
-    CreateSpecialistView, CreateClinicView, ModifyClinicFORM, ModifyUserPatientFORM, ModifyUserSpecialistFORM
+    CreateSpecialistView, CreateClinicView, ModifyClinicFORM, ModifyUserPatientFORM, ModifyUserSpecialistFORM,\
+    CreateViewType, CreateViewSpecialization, ListViewType, ListViewSpecialization
 
 
 urlpatterns = [
@@ -47,4 +48,8 @@ urlpatterns = [
     path('modify_clinic/<int:pk>/', ModifyClinicFORM.as_view(), name='modify_clinic'),
     path('modify_user/', ModifyUserPatientFORM.as_view(), name='modify_user'),
     path('modify_specialist/', ModifyUserSpecialistFORM.as_view(), name='modify_specialist'),
+    path('create_type/', CreateViewType.as_view(), name='create_type'),
+    path('create_specialization/', CreateViewSpecialization.as_view(), name='create_specialization'),
+    path('list_type/', ListViewType.as_view(), name='list_types'),
+    path('list_specialization/', ListViewSpecialization.as_view(), name='list_specializations'),
 ]

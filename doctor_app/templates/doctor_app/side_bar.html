@@ -20,34 +20,33 @@
           <li><a href="{%  url 'list_appointments' %}">Appointments</a></li>
           <li><a href="{%  url 'create_schedule' %}">New schedule</a></li>
           <li><a href="{%  url 'create_specialist' %}">New specialist</a></li>
+          <li><a href="{%  url 'list_specializations' %}">Specializations</a></li>
+          <li><a href="{%  url 'list_types' %}">Appointment types</a></li>
           <li><a href="/admin/">ADMIN</a></li>
 
-          <li>{% if user.is_authenticated %}
-                <a href="{% url 'logout' %}">LOGOUT</a>
-          {% else %}
-                <p><strong><a href="{% url 'login' %}">LOGIN</a></strong></p>
-              <p><a href="{% url 'u_registration' %}">User registration</a></p>
-          {% endif %} </li>
+
 
 
           </ul>
-      <h3>  {{ date }}</h3>
+
     </div>
   </div>
 
   <div id="content">
-     <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a href="#"><i class="zmdi zmdi-notifications text-danger"></i>
-            </a>
-          </li>
-{#          <li id="login"><a href="#"><button>LOGIN</button></a></li>#}
-        </ul>
-      </div>
-    </nav>
+    <div class="log"> <h4> {{ date }}</h4>
+
+        <div style="display: flex; text-align: left; margin-left: 1300px">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">LOGOUT</a>
+                {% else %}
+                    <ul><a href="{% url 'login' %}">LOGIN</a>
+                        <a href="{% url 'u_registration' %}">User registration</a>
+                    </ul>
+        {% endif %} </div>
+     </div>
     <div class="container-fluid">
+
     </div>
+
   </div>
 </div>

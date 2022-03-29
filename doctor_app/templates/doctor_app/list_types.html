@@ -1,0 +1,14 @@
+{% extends 'doctor_app/base.html' %}
+{% block zawartosc %}
+List of appointment types:
+    <ul>
+    {% for obj in object_list %}
+        <li>
+            <a>{{ obj}} </a>
+        </li>
+
+    {% endfor %}
+    </ul>
+            <a href="{% url 'create_type' %}"> Create new appointment type</a>
+
+{% endblock %}

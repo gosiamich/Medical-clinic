@@ -1,12 +1,21 @@
 import pytest
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 
 from doctor_app.models import Appointment, Clinic, Address, Specialization, Specialist, Schedule, Patient, Type
 
 
 @pytest.fixture
 def user():
-    return User.objects.create_user(username='gosia', password='gosia')
+    user = User.objects.create_user(username='gosia', password='gosia')
+    vs = Permission.objects.get(codename='view_specialization')
+    user.user_permissions.add(vs)
+    vt = Permission.objects.get(codename='view_type')
+    user.user_permissions.add(vt)
+    cs = Permission.objects.get(codename='add_specialization')
+    user.user_permissions.add(cs)
+    ct = Permission.objects.get(codename='add_type')
+    user.user_permissions.add(ct)
+    return user
 
 @pytest.fixture
 def user2():
@@ -14,7 +23,7 @@ def user2():
 
 @pytest.fixture
 def superuser():
-    return User.objects.create_user(username='gosia', password='gosia', is_superuser= True)
+    return User.objects.create_superuser(username='gos', password='gosia')
 
 @pytest.fixture
 def address():

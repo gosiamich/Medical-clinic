@@ -33,18 +33,39 @@ p {
   font-size: 1.2rem;
 }
 
-.topnavv {
+/*.topnavv {*/
+/*    overflow: hidden;*/
+/*    background-color:#04AA6D;*/
+/*}*/
+
+/*.topnav a {*/
+/*    float: left;*/
+/*    color: #205067;*/
+/*    text-align: center;*/
+/*    padding: 14px 16px;*/
+/*    text-decoration: none;*/
+/*    font-size: 17px;*/
+/*}*/
+/*}
+
+.topnav {
     overflow: hidden;
-    background-color:#04AA6D;
+    background-color: #333;
 }
 
-.topnav a {
-    float: left;
-    color: #205067;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
+topbar {
+
+height: 40px;
+width: 100%;
+opacity: 0.5;
+background-color: #336680;
+box-shadow: 0.1em 0.1em 0.1em;
+position: absolute;
+top: 0;
+left: 0;
+padding: 30px;
+text-align: left;
+
 }
 
 .bg-light {

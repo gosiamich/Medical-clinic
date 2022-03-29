@@ -41,6 +41,7 @@ class Patient(models.Model):
         return reverse('detail_patient', args=(self.id,))
 
 
+
 class Specialist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE)
@@ -109,6 +110,7 @@ class Type(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
 
 
 class Appointment(models.Model):

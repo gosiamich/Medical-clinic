@@ -15,7 +15,7 @@
       <th>Addrress</th>
       <th> Email </th>
       <th>User name</th>
-      <th>Update</th>
+{#      <th>Update</th>#}
 
           {% for obj in object_list %}
   </tr>
@@ -28,7 +28,7 @@
     <th> {{ obj.address }}</th>
     <th> {{ obj.user.email }} </th>
     <th> {{ obj.user.username }} (id: {{ obj.user.id }}) </th>
-    <th><a href="{{ obj.get_update_url }}">Update </a></th>
+{#    <th><a href="{{ obj.get_update_url }}">Update </a></th>#}
 
   </tr>
          {% endfor %}

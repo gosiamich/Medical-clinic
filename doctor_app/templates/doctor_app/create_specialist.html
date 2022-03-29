@@ -2,10 +2,8 @@
 {% block zawartosc %}
     <form method="post">
      {% csrf_token %}
-        <strong> {{ message }} </strong>
+        <strong> Create new specialist: </strong>
     {{ form.as_p }}
-    {{ model_form.as_p }}
-    {{ address_form.as_p }}
-        <input type="submit" value="Submit">
+    <input type="submit" value="Submit">
     </form>
 {% endblock %}

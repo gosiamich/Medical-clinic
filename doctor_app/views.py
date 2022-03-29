@@ -1,4 +1,5 @@
 import datetime
+from audioop import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
@@ -12,21 +13,20 @@ from django.views.generic import ListView, DetailView, UpdateView, DeleteView, C
 from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm, CreateSpecialistForm, \
     CreateClinicForm
 from accounts.forms import CreateUserForm
-from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist, Address
+from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist, Address, Type, Specialization
 from django.contrib.auth.models import User
 
-
+# 1
 class Index(View):
     def get(self, request):
-        message = f'Witaj Internauto!!'
-        return render(request, "doctor_app/index.html", {'message': message})
+        return render(request, "doctor_app/index.html")
 
-
+# 2
 class SuperuserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
 
-
+#3
 class PatientRegistrationView(View):
 
     def get(self, request):
@@ -55,7 +55,7 @@ class PatientRegistrationView(View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form})
 
-
+#4
 class CreateSpecialistView(SuperuserRequiredMixin, View):
     def get(self, request):
         form = CreateUserForm()
@@ -82,7 +82,7 @@ class CreateSpecialistView(SuperuserRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form})
 
-
+#5
 class CreateClinicView(SuperuserRequiredMixin, View):
     def get(self, request):
         model_form = CreateClinicForm()
@@ -103,14 +103,14 @@ class CreateClinicView(SuperuserRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'model_form': model_form, 'address_form': address_form, 'message': 'Try again (NEW CLINIC)' })
 
-
+#6
 class CreateViewSchedule(SuperuserRequiredMixin,CreateView):
     model = Schedule
     fields = '__all__'
     success_url = reverse_lazy('list_schedules')
     template_name = 'doctor_app/create_schedule.html'
 
-
+#7
 class AddAppointmentView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -129,55 +129,41 @@ class AddAppointmentView(LoginRequiredMixin, View):
             patient_id = user.patient.id
             Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
                                                patient_id=patient_id, type=type)
-            return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
+            return redirect('index')
+            # return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
         return render(request, 'doctor_app/form.html', {'form': form})
 
-
+#8
 class ListViewPatient(PermissionRequiredMixin, ListView):
     permission_required = ['doctor_app.view_patient']
     model = Patient
     template_name = 'doctor_app/list_patients.html'
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get the context
-        context = super(ListViewPatient, self).get_context_data(**kwargs)
-        # Create any data and add it to the context
-        context['message'] = 'This is just some data from extra context'
-        return context
-
-
+#9
 class ListViewClinic(ListView):
     model = Clinic
     template_name = 'doctor_app/list_clinics.html'
 
-
+# 10
 class ListViewSpecialist(ListView):
     model = Specialist
     template_name = 'doctor_app/list_specialists.html'
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get the context
-        context = super(ListViewSpecialist, self).get_context_data(**kwargs)
-        # Create any data and add it to the context
-        context['message'] = 'List of Specialists:.'
-        return context
-
-
+# 11
 class ListViewSchedule(SuperuserRequiredMixin, ListView):
     model = Schedule
     template_name = 'doctor_app/list_schedules.html'
 
-
+# 12
 class ListViewAppointment(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = 'doctor_app/list_appointments.html'
-
-
+# 13
 class DetailViewClinic(DetailView):
     model = Clinic
     template_name = 'doctor_app/detail_clinic.html'
 
-
+# 14
 class ModifyUserPatientFORM(LoginRequiredMixin, View):
     # only Patient may change its own data
     def get(self, request):
@@ -209,7 +195,7 @@ class ModifyUserPatientFORM(LoginRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
 
-
+# 15
 class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
     permission_required = ['doctor_app.change_specialist']
     # only Specialist may change its own data
@@ -242,7 +228,7 @@ class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
 
-
+# 16
 class ModifyClinicFORM(SuperuserRequiredMixin, View):
     def get(self, request, pk):
         clinic = Clinic.objects.get(id=pk)
@@ -261,33 +247,49 @@ class ModifyClinicFORM(SuperuserRequiredMixin, View):
             clinic.save()
             return redirect('list_clinics')
 
-
-class UpdateViewSchedule(UpdateView):
+# 17
+class UpdateViewSchedule(PermissionRequiredMixin, UpdateView):
+    permission_required = ['doctor_app.change_schedule']
     model = Schedule
     fields = '__all__'
     success_url = reverse_lazy('list_schedules')
     template_name = 'doctor_app/form.html'
 
-
+# 18
 class DeleteViewSchedule(PermissionRequiredMixin, DeleteView):
     permission_required = ['doctor_app.delete_schedule']
     model = Schedule
     success_url = '/list_schedules/'
 
-
+# 19
 class DeleteViewAppointment(SuperuserRequiredMixin, DeleteView):
     model = Appointment
     success_url = '/list_appointments/'
 
+#20
+class CreateViewType(PermissionRequiredMixin, CreateView):
+    permission_required = ['doctor_app.add_type']
+    model = Type
+    fields = '__all__'
+    success_url = reverse_lazy("list_types")
+    template_name = 'doctor_app/create_type.html'
 
-# class UpdateViewClinic(UpdateView):
-#     model = Clinic
-#     fields = ['name', 'phone_number', 'email']
-#     success_url = reverse_lazy('list_clinics')
-#     template_name = 'doctor_app/form.html'
+# 21
+class ListViewType(PermissionRequiredMixin, ListView):
+    permission_required = ['doctor_app.view_type']
+    model = Type
+    template_name = 'doctor_app/list_types.html'
 
-# class UpdateViewAddress(UpdateView):
-#     model = Address
-#     fields = '__all__'
-#     success_url = reverse_lazy('/')
-#     template_name = 'doctor_app/form.html'
+# 22
+class CreateViewSpecialization(PermissionRequiredMixin, CreateView):
+    permission_required = ['doctor_app.add_specialization']
+    model = Specialization
+    fields = '__all__'
+    success_url = reverse_lazy('list_specializations')
+    template_name = 'doctor_app/create_specialization.html'
+
+# 23
+class ListViewSpecialization(PermissionRequiredMixin, ListView):
+    permission_required = ['doctor_app.view_specialization']
+    model = Specialization
+    template_name = 'doctor_app/list_specialization.html'

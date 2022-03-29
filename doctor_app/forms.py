@@ -50,7 +50,7 @@ class AddAppointmentForm(forms.Form):
                              validators=[check_date, ckeck_weekday, ],
                              widget=forms.DateInput(attrs={'type': 'date', }))
     a_time = forms.TimeField(label='Time:', \
-                             help_text='Clinic hours 10-18', \
+                              help_text='Clinic hours 10-18', \
                              widget=forms.DateInput(
                                  attrs={'type': 'time', 'min': '10:00', 'max': '18:00', 'step': '1800'}, ))
 
