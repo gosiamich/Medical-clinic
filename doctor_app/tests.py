@@ -32,6 +32,31 @@ def test_registration_get():
     assert isinstance(response.context['address_form'], CreateAddressForm)
 
 @pytest.mark.django_db
+def test_PatientRegistrationView_post():
+    client = Client()
+    url = reverse('p_registration')
+    date = {
+        'username': 'gos',
+        'password':'goog',
+        'first_name':'gos',
+        'last_name':'mic',
+        'email':'gm@p.pl',
+        'city': 'Poznań',
+        'postcode':'60-476',
+        'street':'Kaliska',
+        'building_number':'55',
+        'pesel': '5854745852',
+        'gender': 'F',
+        'phone_number':'55',
+            }
+    response = client.post(url, date)
+    assert response.status_code == 302
+    new_url = reverse('index')
+    assert response.url.startswith(new_url)
+    Patient.objects.get(pesel='5854745852')
+
+
+@pytest.mark.django_db
 def test_add_appointment_not_login():
     client = Client()
     url = reverse('add_appointment')
@@ -48,18 +73,18 @@ def test_add_appointment_login_get(user):
     response = client.get(url)
     assert response.status_code == 200
     assert isinstance(response.context['form'], AddAppointmentForm)
-
+#
 # @pytest.mark.django_db
 # def test_add_appointment_post(user2, patient, clinic, specialist, type):
 #     client = Client()
 #     client.force_login(user2)
 #     url = reverse('add_appointment')
 #     date = {
-#         'clinic': clinic.id,
-#         'specialist': '1',
+#         'clinic': clinic,
+#         'specialist': specialist,
 #         'a_date':'2022-3-28',
 #         'a_time': '12:30',
-#         'type': type.id,
+#         'type': type,
 #         'patient': user2.patient.id,
 #     }
 #     response = client.post(url, date)
@@ -110,6 +135,23 @@ def test_CreateClinicView_post(superuser):
     Clinic.objects.get(name='Luxmed')
 
 
+def test_DetailViewClinic(clinic):
+    client = Client()                  
+    url = reverse('index')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+#
+# @pytest.mark.parametrize("index",list(range(10)))
+# @pytest.mark.django_db
+# def test_szczegoly_osoby( index, client, osoby, user):
+#     client.force_login(user)
+#     result = client.get(reverse("osoba", args=(osoby[index].id,)))
+#     assert result.status_code == 200
+#     assert result.context['object'].imie == osoby[index].imie
+#     assert result.context['object'].nazwisko == osoby[index].nazwisko
+
 @pytest.mark.django_db
 def test_CreateSpecialistView_not_login():
     client = Client()
@@ -151,9 +193,9 @@ def test_CreateSpecialistView_post(superuser, specialization):
     }
     response = client.post(url, data)
     assert response.status_code == 302
-    # new_url = reverse('list_specialists')
-    # assert response.url.startswith(new_url)
-    # Specialist.objects.get(first_name='gos')
+    new_url = reverse('list_specialists')
+    assert response.url.startswith(new_url)
+    Specialist.objects.get(first_name='gos')
 
 
 @pytest.mark.django_db
@@ -372,15 +414,7 @@ def test_ListViewType_login_with_perm(user):
     response = client.get(url)
     assert response.status_code == 200
     assert response.context['object_list'].count() == 0
-#
-# @pytest.mark.parametrize("index",list(range(10)))
-# @pytest.mark.django_db
-# def test_szczegoly_osoby( index, client, osoby, user):
-#     client.force_login(user)
-#     result = client.get(reverse("osoba", args=(osoby[index].id,)))
-#     assert result.status_code == 200
-#     assert result.context['object'].imie == osoby[index].imie
-#     assert result.context['object'].nazwisko == osoby[index].nazwisko
+
 
 
 

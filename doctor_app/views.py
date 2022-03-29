@@ -50,8 +50,8 @@ class PatientRegistrationView(View):
             patient.user = user
             patient.address = address
             patient.save()
-            message = f'Thank Yoy for registration. Now You can make an appointment'
-            return render(request, 'doctor_app/index.html', {'message': message})
+            # message = f'Thank Yoy for registration. Now You can make an appointment'
+            return redirect( 'index')
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form})
 
