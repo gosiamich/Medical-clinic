@@ -575,4 +575,16 @@ def test_DeleteViewAppointment_login_with_perm(user, appointment):
     response = client.get(url)
     assert response.status_code == 200
 
+
+@pytest.mark.django_db
+def test_DeleteViewAppointment_post_login_with_permission(user, appointment):
+    client = Client()
+    client.force_login(user)
+    url = reverse('delete_appointment', args=(appointment.id,))
+    response = client.post(url)
+    assert response.status_code == 302
+    new_url = reverse('list_appointments')
+    assert response.url.startswith(new_url)
+
+
 # ???????????????????????

@@ -20,6 +20,7 @@ body {
   width: 100%;
   position: relative;
   margin-left: 300px;
+  line-height: 30px;
 }
 
 /* Sidebar Styles */
@@ -33,7 +34,7 @@ body {
   font-size: 20px;
   margin-left: -250px;
   overflow-y: auto;
-  background: linear-gradient(to bottom, #245d24 12%, #00cc00 100%);
+  background: linear-gradient(to bottom, #348034 12%, #00cc00 100%);
   -webkit-transition: all 0.5s ease;
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
@@ -41,10 +42,10 @@ body {
 }
 
 #sidebar header {
-  background-color: #003300;
+  background-color: #348034;
   font-size: 30px;
     padding: 10px;
-  line-height: 82px;
+  line-height: 35px;
   text-align: center;
 }
 
@@ -111,10 +112,7 @@ li {
   padding: 6px 4px;
 }
 
-#log  {
-  position: absolute; right: 40px;
-  font-size: 20px;
-}
+
 table, th, td {
   font-size: 15px;
   padding: 10px 20px;
@@ -122,3 +120,13 @@ table, th, td {
   border-collapse: collapse;
 }
 
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: 300px;
+    font-size: 15px;
+    padding: 5px;
+    line-height: 35px;
+}

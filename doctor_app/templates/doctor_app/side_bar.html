@@ -8,7 +8,6 @@
     <div id="li_a">
       <ul>
           <li>
-              <h4>Witaj {{ user.first_name }} {{ user.last_name }}</h4>
             <a href="{% url 'modify_user' %}">Modify user</a></li>
           </li>
           <li><a href="{% url 'p_registration' %}">Patient REGISTRATION FORM</a></li>
@@ -33,16 +32,12 @@
   </div>
 
   <div id="container">
-      <div class="log"> <h4> {{ date }}</h4></div>
-
         <div style="display: flex; position: relative; text-align: left; margin-left: 1500px">
+
                 {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}">LOGOUT</a>
                 {% else %}
-{#                    <ul>#}
-                    <a href="{% url 'login' %}">LOGIN</a>
-{#                        <li><a href="{% url 'u_registration' %}">User registration</a></li>#}
-{#                    </ul>#}
+                    <h3><a href="{% url 'login' %}">LOGIN</a></h3>
         {% endif %} </div>
      </div>
     <div class="container-fluid">
@@ -50,4 +45,5 @@
     </div>
 
   </div>
+
 </div>
