@@ -18,7 +18,7 @@ body {
 
 #content {
   width: 100%;
-  position: absolute;
+  position: relative;
   margin-left: 300px;
 }
 
@@ -33,7 +33,7 @@ body {
   font-size: 20px;
   margin-left: -250px;
   overflow-y: auto;
-  background: linear-gradient(to bottom, #003300 12%, #00cc00 100%);
+  background: linear-gradient(to bottom, #245d24 12%, #00cc00 100%);
   -webkit-transition: all 0.5s ease;
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
@@ -43,7 +43,8 @@ body {
 #sidebar header {
   background-color: #003300;
   font-size: 30px;
-  line-height: 12px;
+    padding: 10px;
+  line-height: 82px;
   text-align: center;
 }
 

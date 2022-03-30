@@ -15,6 +15,16 @@ def user():
     user.user_permissions.add(cs)
     ct = Permission.objects.get(codename='add_type')
     user.user_permissions.add(ct)
+    vsc = Permission.objects.get(codename='view_schedule')
+    user.user_permissions.add(vsc)
+    dsc = Permission.objects.get(codename='delete_schedule')
+    user.user_permissions.add(dsc)
+    da = Permission.objects.get(codename='delete_appointment')
+    user.user_permissions.add(da)
+    msch = Permission.objects.get(codename='change_schedule')
+    user.user_permissions.add(msch)
+    mc = Permission.objects.get(codename='change_clinic')
+    user.user_permissions.add(mc)
     return user
 
 @pytest.fixture
@@ -35,7 +45,7 @@ def type():
 
 @pytest.fixture
 def clinic(address):
-    return Clinic.objects.create(name='Lux',phone_number='5', email='l@p.pl', address=address )
+    return Clinic.objects.create(name='Lux',phone_number='5', email='l@p.pl', address=address)
 
 @pytest.fixture
 def specialization():
@@ -77,3 +87,10 @@ def specialists(address, user2, specialization):
     spec = Specialist.objects.create(user=user2, address=address, specialization=specialization,phone_number='5')
     list.append(spec)
     return list
+
+@pytest.fixture
+def appointment(patient, clinics, specialist,type):
+    clinic = clinics[0]
+    return Appointment.objects.create(a_date='2022-3-25', a_time='10:00', specialist=specialist, clinic=clinic,\
+                                               patient=patient, type=type)
+

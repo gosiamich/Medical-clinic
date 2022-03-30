@@ -150,7 +150,8 @@ class ListViewSpecialist(ListView):
     template_name = 'doctor_app/list_specialists.html'
 
 # 11
-class ListViewSchedule(SuperuserRequiredMixin, ListView):
+class ListViewSchedule(PermissionRequiredMixin, ListView):
+    permission_required = ['doctor_app.view_schedule']
     model = Schedule
     template_name = 'doctor_app/list_schedules.html'
 
@@ -229,7 +230,8 @@ class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
                       {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
 
 # 16
-class ModifyClinicFORM(SuperuserRequiredMixin, View):
+class ModifyClinicFORM(PermissionRequiredMixin, View):
+    permission_required = ['doctor_app.change_clinic']
     def get(self, request, pk):
         clinic = Clinic.objects.get(id=pk)
         model_form = CreateClinicForm(instance= clinic)
@@ -262,7 +264,8 @@ class DeleteViewSchedule(PermissionRequiredMixin, DeleteView):
     success_url = '/list_schedules/'
 
 # 19
-class DeleteViewAppointment(SuperuserRequiredMixin, DeleteView):
+class DeleteViewAppointment(PermissionRequiredMixin, DeleteView):
+    permission_required = ['doctor_app.delete_appointment']
     model = Appointment
     success_url = '/list_appointments/'
 
