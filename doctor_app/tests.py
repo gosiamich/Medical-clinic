@@ -104,12 +104,11 @@ def test_add_appointment_post(user2, patient, clinic, specialist, type):
     client.force_login(user2)
     url = reverse('add_appointment')
     date = {
-        'clinic': clinic,
-        'specialist': specialist,
+        'clinic': clinic.id,
+        'specialist': specialist.id,
         'a_date':'2022-3-28',
         'a_time': '12:30',
-        'type': type,
-        'patient': user2.patient.id,
+        'type': type.id,
     }
     response = client.post(url, date)
     assert response.status_code == 302
@@ -224,29 +223,49 @@ def test_CreateSpecialistView_get_login(superuser):
     assert isinstance(response.context['address_form'], CreateAddressForm)
 
 
-# @pytest.mark.django_db
-# def test_CreateSpecialistView_post(superuser, specialization):
-#     client = Client()
-#     client.force_login(superuser)
-#     url = reverse('create_specialist')
-#     data = {
-#         'username': 'gos',
-#         'password':'goog',
-#         'first_name':'gos',
-#         'last_name':'mic',
-#         'email':'gm@p.pl',
-#         'city': 'Poznań',
-#         'postcode':'60-476',
-#         'street':'Kaliska',
-#         'building_number':'55',
-#         'specialization': specialization.id,
-#         'phone_number':'55',
-#     }
-#     response = client.post(url, data)
-#     assert response.status_code == 302
-#     new_url = reverse('list_specialists')
-#     assert response.url.startswith(new_url)
-#     Specialist.objects.get(first_name='gos')
+
+@pytest.mark.django_db
+def test_CreateViewSchedule_post(superuser,clinic, specialist):
+    client = Client()
+    client.force_login(superuser)
+    url = reverse('create_schedule')
+    data = {
+        'day_of_week': '1',
+        'sch_from': '10:00',
+        'sch_to': '15:00',
+        'clinic': clinic.id,
+        'specialist': specialist.id,
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    new_url = reverse('list_schedules')
+    assert response.url.startswith(new_url)
+    Schedule.objects.get(**data)
+
+
+@pytest.mark.django_db
+def test_CreateSpecialistView_post(superuser, specialization):
+    client = Client()
+    client.force_login(superuser)
+    url = reverse('create_specialist')
+    data = {
+        'username': 'gos',
+        'password':'goog',
+        'first_name':'gos',
+        'last_name':'mic',
+        'email':'gm@p.pl',
+        'city': 'Poznań',
+        'postcode':'60-476',
+        'street':'Kaliska',
+        'building_number':'55',
+        'specialization': specialization.id,
+        'phone_number':'55',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    new_url = reverse('list_specialists')
+    assert response.url.startswith(new_url)
+    Specialist.objects.get(**data)
 
 
 @pytest.mark.django_db
@@ -260,7 +279,6 @@ def test_CreateViewSchedule_not_login():
 
 @pytest.mark.django_db
 def test_CreateViewSchedule_post(superuser,clinic, specialist):
-    # bez superusera nie działa, list_schedules wymaga superusra
     client = Client()
     client.force_login(superuser)
     url = reverse('create_schedule')
