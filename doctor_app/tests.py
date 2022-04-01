@@ -5,6 +5,7 @@ import pytest
 
 # Create your tests here.
 from django.urls import reverse
+from freezegun import freeze_time
 
 from accounts.forms import CreateUserForm
 from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm, CreateSpecialistForm, \
@@ -98,6 +99,7 @@ def test_add_appointment_login_get(user):
     assert response.status_code == 200
     assert isinstance(response.context['form'], AddAppointmentForm)
 
+@freeze_time('2022-03-31 00:00:00')
 @pytest.mark.django_db
 def test_add_appointment_post(user2, patient, clinic, specialist, type):
     client = Client()
@@ -106,7 +108,7 @@ def test_add_appointment_post(user2, patient, clinic, specialist, type):
     date = {
         'clinic': clinic.id,
         'specialist': specialist.id,
-        'a_date':'2022-3-28',
+        'a_date':'2022-04-04',
         'a_time': '12:30',
         'type': type.id,
     }
@@ -249,7 +251,7 @@ def test_CreateSpecialistView_post(superuser, specialization):
     client.force_login(superuser)
     url = reverse('create_specialist')
     data = {
-        'username': 'gos',
+        'username': 'gos2',
         'password':'goog',
         'first_name':'gos',
         'last_name':'mic',
@@ -265,7 +267,7 @@ def test_CreateSpecialistView_post(superuser, specialization):
     assert response.status_code == 302
     new_url = reverse('list_specialists')
     assert response.url.startswith(new_url)
-    Specialist.objects.get(**data)
+    Specialist.objects.get(user__username='gos2')
 
 
 @pytest.mark.django_db
@@ -603,6 +605,7 @@ def test_DeleteViewAppointment_post_login_with_permission(user, appointment):
     assert response.status_code == 302
     new_url = reverse('list_appointments')
     assert response.url.startswith(new_url)
-
+    with pytest.raises(Appointment.DoesNotExist):
+        Appointment.objects.get(id=appointment.id)
 
 # ???????????????????????

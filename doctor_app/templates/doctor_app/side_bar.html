@@ -24,10 +24,9 @@
           <li><a href="{%  url 'list_specializations' %}">Specializations</a></li>
           <li><a href="{%  url 'list_types' %}">Appointment types</a></li>
           <li><a href="/admin/">ADMIN</a></li>
-          <li><a href="{%  url 'list_specialist_schedules' %}">Specialist schedules</a></li>
-
-
-
+          {% if perms.doctor_app.view_schedule %}
+              <li><a href="{%  url 'list_specialist_schedules' %}">Specialist schedules</a>
+          {% endif %}
 
           </ul>
 
@@ -36,7 +35,7 @@
 
   <div id="container">
         <div style="display: flex; position: relative; text-align: left; margin-left: 1500px">
-Witaj  {{ user.first_name }}  {{ user.last_name }}
+
                 {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}">LOGOUT</a>
                 {% else %}

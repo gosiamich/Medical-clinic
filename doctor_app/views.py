@@ -299,8 +299,10 @@ class ListViewSpecialization(PermissionRequiredMixin, ListView):
 
 
 # 11
-class ListSpecialistSchedule(View):
+class ListSpecialistSchedule(ListView):
+    model = Schedule
+    template_name = 'doctor_app/list_schedules.html'
 
-    def get(self, request):
-        object_list = Schedule.objects.filter(specialist =Specialist.objects.get(user=request.user.id))
-        return render(request, 'doctor_app/list_schedules.html', {'object_list': object_list})
+    def get_queryset(self):
+        object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id))
+        return object_list
