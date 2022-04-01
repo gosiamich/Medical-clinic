@@ -540,7 +540,7 @@ def test_ListViewType_login_with_perm(user):
 
 
 @pytest.mark.django_db
-def test_DeleteViewSchedule_not_login(schedules):
+def test_DeleteViewSchedule_get_not_login(schedules):
     schedule = schedules[0]
     client = Client()
     url = reverse('delete_schedule', args=(schedule.id,))
@@ -551,7 +551,7 @@ def test_DeleteViewSchedule_not_login(schedules):
 
 
 @pytest.mark.django_db
-def test_DeleteViewSchedule_login_without_perm(user2, schedules):
+def test_DeleteViewSchedule_get_login_without_perm(user2, schedules):
     schedule = schedules[0]
     client = Client()
     client.force_login(user2)
@@ -560,13 +560,28 @@ def test_DeleteViewSchedule_login_without_perm(user2, schedules):
     assert response.status_code == 403
 
 @pytest.mark.django_db
-def test_DeleteViewSchedule_login_with_perm(user, schedules):
+def test_DeleteViewSchedule_get_login_with_perm(user, schedules):
     schedule = schedules[0]
     client = Client()
     client.force_login(user)
     url = reverse('delete_schedule', args=(schedule.id,))
     response = client.get(url)
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_DeleteViewSchedule_post_login_with_permission(user, schedules):
+    schedule = schedules[0]
+    client = Client()
+    client.force_login(user)
+    url = reverse('delete_schedule', args=(schedule.id,))
+    response = client.post(url)
+    assert response.status_code == 302
+    new_url = reverse('list_schedules')
+    assert response.url.startswith(new_url)
+    with pytest.raises(schedule.DoesNotExist):
+        Schedule.objects.get(id=schedule.id)
+
 
 
 @pytest.mark.django_db
@@ -580,7 +595,7 @@ def test_DeleteViewAppointment_not_login(appointment):
 
 
 @pytest.mark.django_db
-def test_DeleteViewAppointment_login_without_perm(user2, appointment):
+def test_DeleteViewAppointment_get_login_without_perm(user2, appointment):
     client = Client()
     client.force_login(user2)
     url = reverse('delete_appointment', args=(appointment.id,))
@@ -588,7 +603,7 @@ def test_DeleteViewAppointment_login_without_perm(user2, appointment):
     assert response.status_code == 403
 
 @pytest.mark.django_db
-def test_DeleteViewAppointment_login_with_perm(user, appointment):
+def test_DeleteViewAppointment_get_login_with_perm(user, appointment):
     client = Client()
     client.force_login(user)
     url = reverse('delete_appointment', args=(appointment.id,))
