@@ -7,12 +7,16 @@
   <tr>
       <th> <i></i>SPECIALIST</i> </th>
       <th> SPECIALIZATION </th>
+      <th>Details</th>
       {% for obj in object_list %}
   </tr>
     <th>
         <a href="{% url 'modify_specialist' %}">{{ obj }}</a>
     </th>
           <th> {{ obj.specialization }}</th>
+     <th>
+        <p><a href="{{ obj.get_absolute_url }}">Detail</a>
+     </th>
   </tr>
          {% endfor %}
 </table>

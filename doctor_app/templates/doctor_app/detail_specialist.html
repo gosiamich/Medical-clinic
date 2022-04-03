@@ -1,0 +1,31 @@
+{% extends 'doctor_app/base.html' %}
+{% block zawartosc %}
+
+      <h3> Details aboute specialist</h3>
+
+  <h2>{{specialist.user.first_name}}  {{specialist.user.last_name}}</h2>
+  <p><strong>Email:</strong> {{ specialist.user.email}}</p>
+  <p><strong>Specialist works at clinics:</strong>
+      {%  for clinic in specialist.set_clinic %}
+       <li>
+           <a>{{ clinic }}</a>
+       </li>
+    {% endfor %}
+    Schedules:
+           <table>
+              <tr>
+                  <th> <i></i>Day of week</i> </th>
+                  <th> Clinic </th>
+                  <th> From time </th>
+                  <th> To time </th>
+                  {%  for schedule in specialist.get_schedules %}
+              </tr>
+                    <th>  {{ schedule.get_name_of_week }} </th>
+                    <th> {{ schedule.clinic }} </th>
+                    <th> {{ schedule.sch_from }} </th>
+                    <th> {{ schedule.sch_to }} </th>
+              </tr>
+                     {% endfor %}
+           </table>
+    </p>
+{% endblock %}

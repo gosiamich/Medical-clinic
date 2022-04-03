@@ -21,6 +21,11 @@ class Index(View):
     def get(self, request):
         return render(request, "doctor_app/index.html")
 
+class Aboute(View):
+    def get(self, request):
+        return render(request, "doctor_app/aboute.html")
+
+
 # 2
 class SuperuserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
@@ -154,6 +159,7 @@ class ListViewSchedule(PermissionRequiredMixin, ListView):
     permission_required = ['doctor_app.view_schedule']
     model = Schedule
     template_name = 'doctor_app/list_schedules.html'
+    ordering = ['specialist', 'day_of_week']
 
 # 12
 class ListViewAppointment(LoginRequiredMixin, ListView):
@@ -298,7 +304,7 @@ class ListViewSpecialization(PermissionRequiredMixin, ListView):
     template_name = 'doctor_app/list_specialization.html'
 
 
-# 11
+# 24
 class ListSpecialistSchedule(ListView):
     model = Schedule
     template_name = 'doctor_app/list_schedules.html'
@@ -306,3 +312,8 @@ class ListSpecialistSchedule(ListView):
     def get_queryset(self):
         object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id))
         return object_list
+
+
+class DetailViewSpecialist(DetailView):
+    model = Specialist
+    template_name = 'doctor_app/detail_specialist.html'

@@ -15,18 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from doctor_app.views import Index
 from accounts.views import LoginView, LoginForm, LogOut, RegistrationView
-from doctor_app.views import PatientRegistrationView, AddAppointmentView, ListViewPatient, \
+from doctor_app.views import Index, Aboute, PatientRegistrationView, AddAppointmentView, ListViewPatient, \
     ListViewClinic, ListViewSpecialist, DetailViewClinic, ListViewSchedule,\
     ListViewAppointment, DeleteViewAppointment, CreateViewSchedule, UpdateViewSchedule, DeleteViewSchedule,\
     CreateSpecialistView, CreateClinicView, ModifyClinicFORM, ModifyUserPatientFORM, ModifyUserSpecialistFORM,\
-    CreateViewType, CreateViewSpecialization, ListViewType, ListViewSpecialization, ListSpecialistSchedule
+    CreateViewType, CreateViewSpecialization, ListViewType, ListViewSpecialization, ListSpecialistSchedule,\
+    DetailViewSpecialist
 
 
 urlpatterns = [
     path('admin/', admin.site.urls, name= 'admin'),
     path('', Index.as_view(), name= 'index'),
+    path('aboute/', Aboute.as_view(), name = 'aboute'),
     path("accounts/login/", LoginView.as_view(), name='login'),
     path("logout/", LogOut.as_view(), name='logout'),
     path("registration/", RegistrationView.as_view(), name='u_registration'),
@@ -52,5 +53,6 @@ urlpatterns = [
     path('create_specialization/', CreateViewSpecialization.as_view(), name='create_specialization'),
     path('list_type/', ListViewType.as_view(), name='list_types'),
     path('list_specialization/', ListViewSpecialization.as_view(), name='list_specializations'),
-    path('list_specialist_schedules/', ListSpecialistSchedule.as_view(), name='list_specialist_schedules')
+    path('list_specialist_schedules/', ListSpecialistSchedule.as_view(), name='list_specialist_schedules'),
+    path('detail_specialist/<int:pk>/', DetailViewSpecialist.as_view(), name='detail_specialist'),
 ]

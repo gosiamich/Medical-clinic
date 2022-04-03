@@ -54,9 +54,12 @@ class Specialist(models.Model):
     def get_absolute_url(self):
         return reverse('detail_specialist', args=(self.id,))
 
-
     def set_clinic(self):
         return set(self.clinic_set.all())
+
+    def get_schedules(self):
+        return Schedule.objects.filter(specialist_id=self.id).order_by('day_of_week')
+
 
 
 class Clinic(models.Model):
@@ -101,8 +104,12 @@ class Schedule(models.Model):
     def get_delete_url(self):
         return f'/delete_schedule/{self.id}/'
 
+    def get_name_of_week(self):
+        return [y for x,y in WEEK_DAY if x == self.day_of_week][0]
+
     class Meta:
         unique_together = ['specialist', 'clinic', 'day_of_week']
+
 
 
 class Type(models.Model):

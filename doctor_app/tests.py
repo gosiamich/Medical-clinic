@@ -108,7 +108,7 @@ def test_add_appointment_post(user2, patient, clinic, specialist, type):
     date = {
         'clinic': clinic.id,
         'specialist': specialist.id,
-        'a_date':'2022-04-04',
+        'a_date':'2022-4-04',
         'a_time': '12:30',
         'type': type.id,
     }
@@ -622,5 +622,3 @@ def test_DeleteViewAppointment_post_login_with_permission(user, appointment):
     assert response.url.startswith(new_url)
     with pytest.raises(Appointment.DoesNotExist):
         Appointment.objects.get(id=appointment.id)
-
-# ???????????????????????
