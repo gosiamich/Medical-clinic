@@ -25,7 +25,10 @@ def user():
     user.user_permissions.add(msch)
     mc = Permission.objects.get(codename='change_clinic')
     user.user_permissions.add(mc)
+    va = Permission.objects.get(codename='view_appointment')
+    user.user_permissions.add(va)
     return user
+
 
 @pytest.fixture
 def user2():
@@ -53,7 +56,12 @@ def specialization():
 
 @pytest.fixture
 def specialist(address, user2, specialization):
-    return Specialist.objects.create(user=user2, address=address, specialization=specialization,phone_number='5')
+    return Specialist.objects.create(user=user2, address=address, specialization=specialization,phone_number=5)
+
+
+@pytest.fixture
+def specialist2(address, user, specialization):
+    return Specialist.objects.create(user=user, address=address, specialization=specialization,phone_number=5)
 
 @pytest.fixture
 def schedules(clinic, specialist):
@@ -94,3 +102,12 @@ def appointment(patient, clinics, specialist,type):
     return Appointment.objects.create(a_date='2022-3-25', a_time='10:00', specialist=specialist, clinic=clinic,\
                                                patient=patient, type=type)
 
+
+
+@pytest.fixture
+def appointments(patient, clinic, specialist2, type):
+    list =[]
+    app= Appointment.objects.create(a_date='2022-3-25', a_time='10:00', specialist=specialist2, clinic=clinic,\
+                                               patient=patient, type=type)
+    list.append(app)
+    return list

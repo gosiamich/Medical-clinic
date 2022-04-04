@@ -99,16 +99,17 @@ def test_add_appointment_login_get(user):
     assert response.status_code == 200
     assert isinstance(response.context['form'], AddAppointmentForm)
 
+
 @freeze_time('2022-03-31 00:00:00')
 @pytest.mark.django_db
-def test_add_appointment_post(user2, patient, clinic, specialist, type):
+def test_add_appointment_post(user2, patient, clinic, specialist2, type):
     client = Client()
     client.force_login(user2)
     url = reverse('add_appointment')
     date = {
         'clinic': clinic.id,
-        'specialist': specialist.id,
-        'a_date':'2022-4-04',
+        'specialist': specialist2.id,
+        'a_date':'2022-04-04',
         'a_time': '12:30',
         'type': type.id,
     }
@@ -622,3 +623,72 @@ def test_DeleteViewAppointment_post_login_with_permission(user, appointment):
     assert response.url.startswith(new_url)
     with pytest.raises(Appointment.DoesNotExist):
         Appointment.objects.get(id=appointment.id)
+
+@pytest.mark.django_db
+def test_ListSpecialistSchedule_not_login():
+    client = Client()
+    url = reverse('list_specialist_schedules')
+    response = client.get(url)
+    assert response.status_code == 302
+    url = reverse('login')
+    assert response.url.startswith(url)
+
+@pytest.mark.django_db
+def test_ListSpecialistSchedule_login_without_permission(specialist, user2):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('list_specialist_schedules')
+    response = client.get(url)
+    assert response.status_code == 403
+
+
+
+@pytest.mark.django_db
+def test_ListSpecialistSchedule_login_with_permission(specialist2, user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('list_specialist_schedules')
+    response = client.get(url)
+    assert response.status_code == 200
+    response.context['object_list'].count() == 0
+
+
+@pytest.mark.django_db
+def test_DetailViewSpecialist(specialist):
+    client = Client()
+    url = reverse('detail_specialist', args=(specialist.id,))
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['object'].phone_number == specialist.phone_number
+
+
+
+
+@pytest.mark.django_db
+def test_ListSpecialistAppointment_not_login():
+    client = Client()
+    url = reverse('list_specialist_appointments')
+    response = client.get(url)
+    assert response.status_code == 302
+    url = reverse('login')
+    assert response.url.startswith(url)
+
+
+@pytest.mark.django_db
+def test_ListSpecialistAppointment_login_without_permission(appointment, user2):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('list_specialist_appointments')
+    response = client.get(url)
+    assert response.status_code == 403
+
+@pytest.mark.django_db
+def test_ListSpecialistAppointment_login_with_permission(specialist2, appointments, user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('list_specialist_appointments')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['object_list'].count() == len(appointments)
+    for app in appointments:
+        assert app in response.context['object_list']

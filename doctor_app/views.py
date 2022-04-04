@@ -165,6 +165,8 @@ class ListViewSchedule(PermissionRequiredMixin, ListView):
 class ListViewAppointment(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = 'doctor_app/list_appointments.html'
+    ordering = ['a_date', 'a_time']
+
 # 13
 class DetailViewClinic(DetailView):
     model = Clinic
@@ -305,7 +307,8 @@ class ListViewSpecialization(PermissionRequiredMixin, ListView):
 
 
 # 24
-class ListSpecialistSchedule(ListView):
+class ListSpecialistSchedule(PermissionRequiredMixin, ListView):
+    permission_required = ['doctor_app.view_schedule']
     model = Schedule
     template_name = 'doctor_app/list_schedules.html'
 
@@ -313,7 +316,35 @@ class ListSpecialistSchedule(ListView):
         object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id))
         return object_list
 
-
+#25
 class DetailViewSpecialist(DetailView):
     model = Specialist
     template_name = 'doctor_app/detail_specialist.html'
+
+
+#26
+class ListSpecialistAppointment(PermissionRequiredMixin,ListView):
+    permission_required = ['doctor_app.view_appointment']
+    model = Appointment
+    template_name = 'doctor_app/list_appointments.html'
+
+
+    def get_queryset(self):
+        object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('a_date')
+        return object_list
+
+#
+# class BaseList(ListView):
+#     model = Fundraiser
+#     template_name = 'fundraiser/fundraiser_list.html'
+#     ordering = ['-pk']
+#
+#
+# class List(BaseList):
+#     def get_queryset(self):
+#         query_set = super().get_queryset()
+#         return query_set.filter(
+#             active=True,
+#             start_date__lte=make_aware(datetime.now()),
+#             end_date__gte=make_aware(datetime.now()),
+        )

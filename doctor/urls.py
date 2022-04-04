@@ -21,7 +21,7 @@ from doctor_app.views import Index, Aboute, PatientRegistrationView, AddAppointm
     ListViewAppointment, DeleteViewAppointment, CreateViewSchedule, UpdateViewSchedule, DeleteViewSchedule,\
     CreateSpecialistView, CreateClinicView, ModifyClinicFORM, ModifyUserPatientFORM, ModifyUserSpecialistFORM,\
     CreateViewType, CreateViewSpecialization, ListViewType, ListViewSpecialization, ListSpecialistSchedule,\
-    DetailViewSpecialist
+    DetailViewSpecialist, ListSpecialistAppointment
 
 
 urlpatterns = [
@@ -30,14 +30,13 @@ urlpatterns = [
     path('aboute/', Aboute.as_view(), name = 'aboute'),
     path("accounts/login/", LoginView.as_view(), name='login'),
     path("logout/", LogOut.as_view(), name='logout'),
-    path("registration/", RegistrationView.as_view(), name='u_registration'),
-    path("pregistration/", PatientRegistrationView.as_view(), name='p_registration'),
+    path('registration/', RegistrationView.as_view(), name='u_registration'),
+    path('pregistration/', PatientRegistrationView.as_view(), name='p_registration'),
     path('add_appointment/', AddAppointmentView.as_view(), name="add_appointment"),
     path('list_patients/', ListViewPatient.as_view(), name='list_patients'),
     path('list_clinics/', ListViewClinic.as_view(), name='list_clinics'),
     path('list_specialists/', ListViewSpecialist.as_view(), name='list_specialists'),
     path('detail_clinic/<int:pk>/', DetailViewClinic.as_view(), name='detail_clinic'),
-    # path('update_clinic/<int:pk>/', UpdateViewClinic.as_view(), name='update_clinic'),
     path('list_schedules/', ListViewSchedule.as_view(), name='list_schedules'),
     path('list_appointments/', ListViewAppointment.as_view(), name='list_appointments'),
     path('delete_appointment/<int:pk>/', DeleteViewAppointment.as_view(), name='delete_appointment'),
@@ -55,4 +54,5 @@ urlpatterns = [
     path('list_specialization/', ListViewSpecialization.as_view(), name='list_specializations'),
     path('list_specialist_schedules/', ListSpecialistSchedule.as_view(), name='list_specialist_schedules'),
     path('detail_specialist/<int:pk>/', DetailViewSpecialist.as_view(), name='detail_specialist'),
+    path('list_specialist_appointments/',ListSpecialistAppointment.as_view(), name='list_specialist_appointments')
 ]
