@@ -4,14 +4,15 @@
 {{ message }}
     <form action="" method="POST">
         {% csrf_token %}
-    <h2>
-         Choose:
-          </h2>
-    <input type="submit" name="app" value="Actual">
-    <input type="submit" name="app" value="Archive">
+        <p>Choose APPOINTMENTS:</p>
+        <p>
+        <input type="submit" name="app" value="All">
+        <input type="submit" name="app" value="Actual">
+        <input type="submit" name="app" value="Archival">
+      </p>
 </form>
 
-    <p>APPOINTMENTS:</p>
+
    <table>
   <tr>
       <th> Date</th>
@@ -20,8 +21,9 @@
       <th>Specialist</th>
       <th>Type</th>
       <th>Clinic</th>
-      <th>Update</th>
+  {% if perms.doctor_app.change_appointment %}
       <th>Delete</th>
+  {% endif %}
 
           {% for obj in object_list %}
   </tr>
@@ -31,8 +33,9 @@
     <th> {{ obj.specialist }}</th>
     <th> {{ obj.type }}</th>
     <th> {{ obj.clinic }}</th>
-    <th></th>
+    {% if perms.doctor_app.change_appointment %}
     <th><a href="{{ obj.get_delete_url }}">Delete </a></th>
+              {% endif %}
   </tr>
          {% endfor %}
 

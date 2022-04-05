@@ -135,7 +135,7 @@ class AddAppointmentView(LoginRequiredMixin, View):
             patient_id = user.patient.id
             Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
                                                patient_id=patient_id, type=type)
-            request.session['message'] = 'Metting added.'
+            request.session['message'] = f'Your appointment: {a_date}  at {a_time} with specialist: {specialist} in {clinic}'
             return redirect('index')
             # return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
         return render(request, 'doctor_app/form.html', {'form': form})
@@ -321,30 +321,68 @@ class DetailViewSpecialist(DetailView):
 
 
 # 12
-class ListViewAppointment(LoginRequiredMixin, ListView):
-    model = Appointment
-    template_name = 'doctor_app/list_appointments.html'
-    ordering = ['a_date', 'a_time']
+class ListViewAppointment(SuperuserRequiredMixin, View):
 
-#26
-class ListSpecialistAppointment(PermissionRequiredMixin, View):
-    permission_required = ['doctor_app.view_appointment']
-
-    def get(self, request):
-        object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('a_date', 'a_time')
-        return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
+    def get(self,request):
+        object_list = Appointment.objects.all().order_by('a_date', 'a_time')
+        return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
 
     def post(self, request):
         choice = request.POST.get("app")
         if choice == "Actual":
-            object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id), \
-                                                     a_date__lt=datetime.date.today()).order_by('a_date', 'a_time')
-            return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
-        elif choice == 'Archive':
-            object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id),\
-                                                     a_date__gte=datetime.date.today()).order_by('a_date', 'a_time')
-            return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
+            object_list = Appointment.objects.filter(a_date__gte=datetime.date.today()).order_by('a_date', 'a_time')
+        elif choice == 'Archival':
+            object_list = Appointment.objects.filter(a_date__lt=datetime.date.today()).order_by('a_date', 'a_time')
+        elif choice == 'All':
+            object_list = Appointment.objects.all().order_by('a_date', 'a_time')
         else:
             raise Exception('something is wrong :(')
+        return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
+
+
+#26
+class ListUserAppointment(LoginRequiredMixin, View):
+
+    def get(self, request):
+        specialist = Specialist.objects.filter(user=self.request.user.id)
+        if len(specialist) >0:
+            object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).\
+            order_by('a_date', 'a_time')
+        else:
+            object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id)). \
+                order_by('a_date', 'a_time')
+        return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
+
+
+
+    def post(self, request):
+        choice = request.POST.get("app")
+        specialist = Specialist.objects.filter(user=self.request.user.id)
+        if len(specialist) > 0:
+            if choice == "Actual":
+                object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id), \
+                                                     a_date__gte=datetime.date.today()).order_by('a_date', 'a_time')
+            elif choice == 'Archival':
+                object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id),\
+                                                         a_date__lt=datetime.date.today()).order_by('a_date', 'a_time')
+            elif choice == 'All':
+                object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)). \
+                                                                                            order_by('a_date', 'a_time')
+            else:
+                raise Exception('something is wrong :(')
+        else:
+            if choice == "Actual":
+                object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id), \
+                                                     a_date__gte=datetime.date.today()).order_by('a_date', 'a_time')
+            elif choice == 'Archival':
+                object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id),\
+                                                         a_date__lt=datetime.date.today()).order_by('a_date', 'a_time')
+            elif choice == 'All':
+                object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id)). \
+                                                                                            order_by('a_date', 'a_time')
+            else:
+                raise Exception('something is wrong :(')
+        return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
+
 
 

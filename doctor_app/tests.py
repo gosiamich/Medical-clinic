@@ -663,11 +663,10 @@ def test_DetailViewSpecialist(specialist):
 
 
 
-
 @pytest.mark.django_db
 def test_ListSpecialistAppointment_not_login():
     client = Client()
-    url = reverse('list_specialist_appointments')
+    url = reverse('list_user_appointments')
     response = client.get(url)
     assert response.status_code == 302
     url = reverse('login')
@@ -675,18 +674,10 @@ def test_ListSpecialistAppointment_not_login():
 
 
 @pytest.mark.django_db
-def test_ListSpecialistAppointment_login_without_permission(appointment, user2):
-    client = Client()
-    client.force_login(user2)
-    url = reverse('list_specialist_appointments')
-    response = client.get(url)
-    assert response.status_code == 403
-
-@pytest.mark.django_db
-def test_ListSpecialistAppointment_login_with_permission(specialist2, appointments, user):
+def test_ListSpecialistAppointment_login(specialist2, appointments, user):
     client = Client()
     client.force_login(user)
-    url = reverse('list_specialist_appointments')
+    url = reverse('list_user_appointments')
     response = client.get(url)
     assert response.status_code == 200
     assert response.context['object_list'].count() == len(appointments)

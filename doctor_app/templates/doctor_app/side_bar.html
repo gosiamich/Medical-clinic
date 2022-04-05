@@ -26,7 +26,9 @@
           <li><a href="/admin/">ADMIN</a></li>
           {% if perms.doctor_app.view_schedule  and perms.doctor_app.view_schedule %}
               <li><a href="{%  url 'list_specialist_schedules' %}">Specialist schedules</a>
-              <li><a href="{%  url 'list_specialist_appointments' %}">Specialist appointments</a>
+              {% endif %}
+           {% if user.is_authenticated %}
+              <li><a href="{%  url 'list_user_appointments' %}">User appointments</a>
           {% endif %}
 
           </ul>
