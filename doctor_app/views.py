@@ -321,7 +321,7 @@ class DetailViewSpecialist(DetailView):
 
 
 # 12
-class ListViewAppointment(SuperuserRequiredMixin, View):
+class ListAppointment(SuperuserRequiredMixin, View):
 
     def get(self,request):
         object_list = Appointment.objects.all().order_by('a_date', 'a_time')

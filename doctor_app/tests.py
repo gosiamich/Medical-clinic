@@ -179,6 +179,7 @@ def test_ModifyClinicFORM_get_login_without_perm(user2,clinic):
     response = client.get(url)
     assert response.status_code == 403
 
+
 @pytest.mark.django_db
 def test_ModifyClinicFORM_post(user, clinic):
     client = Client()
@@ -664,7 +665,7 @@ def test_DetailViewSpecialist(specialist):
 
 
 @pytest.mark.django_db
-def test_ListSpecialistAppointment_not_login():
+def test_ListUserAppointment_not_login():
     client = Client()
     url = reverse('list_user_appointments')
     response = client.get(url)
@@ -674,10 +675,40 @@ def test_ListSpecialistAppointment_not_login():
 
 
 @pytest.mark.django_db
-def test_ListSpecialistAppointment_login(specialist2, appointments, user):
+def test_ListUserAppointment_login(specialist2, appointments, user):
     client = Client()
     client.force_login(user)
     url = reverse('list_user_appointments')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['object_list'].count() == len(appointments)
+    for app in appointments:
+        assert app in response.context['object_list']
+
+
+
+@pytest.mark.django_db
+def test_ListAppointment_not_login():
+    client = Client()
+    url = reverse('list_appointments')
+    response = client.get(url)
+    assert response.status_code == 302
+    url = reverse('login')
+    assert response.url.startswith(url)
+
+@pytest.mark.django_db
+def test_ListAppointment_login_without_perm(user2):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('list_appointments')
+    response = client.get(url)
+    assert response.status_code == 403
+
+@pytest.mark.django_db
+def test_ListAppointment_login_superuser(specialist2, appointments, superuser):
+    client = Client()
+    client.force_login(superuser)
+    url = reverse('list_appointments')
     response = client.get(url)
     assert response.status_code == 200
     assert response.context['object_list'].count() == len(appointments)
