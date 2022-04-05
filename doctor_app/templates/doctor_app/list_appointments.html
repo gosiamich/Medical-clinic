@@ -2,6 +2,14 @@
 {% block zawartosc %}
 
 {{ message }}
+    <form action="" method="POST">
+        {% csrf_token %}
+    <h2>
+         Choose:
+          </h2>
+    <input type="submit" name="app" value="Actual">
+    <input type="submit" name="app" value="Archive">
+</form>
 
     <p>APPOINTMENTS:</p>
    <table>

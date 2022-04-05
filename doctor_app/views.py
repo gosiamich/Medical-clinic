@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils.datetime_safe import date
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 
@@ -134,6 +135,7 @@ class AddAppointmentView(LoginRequiredMixin, View):
             patient_id = user.patient.id
             Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
                                                patient_id=patient_id, type=type)
+            request.session['message'] = 'Metting added.'
             return redirect('index')
             # return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
         return render(request, 'doctor_app/form.html', {'form': form})
@@ -161,11 +163,7 @@ class ListViewSchedule(PermissionRequiredMixin, ListView):
     template_name = 'doctor_app/list_schedules.html'
     ordering = ['specialist', 'day_of_week']
 
-# 12
-class ListViewAppointment(LoginRequiredMixin, ListView):
-    model = Appointment
-    template_name = 'doctor_app/list_appointments.html'
-    ordering = ['a_date', 'a_time']
+
 
 # 13
 class DetailViewClinic(DetailView):
@@ -313,7 +311,7 @@ class ListSpecialistSchedule(PermissionRequiredMixin, ListView):
     template_name = 'doctor_app/list_schedules.html'
 
     def get_queryset(self):
-        object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id))
+        object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('day_of_week')
         return object_list
 
 #25
@@ -322,29 +320,31 @@ class DetailViewSpecialist(DetailView):
     template_name = 'doctor_app/detail_specialist.html'
 
 
-#26
-class ListSpecialistAppointment(PermissionRequiredMixin,ListView):
-    permission_required = ['doctor_app.view_appointment']
+# 12
+class ListViewAppointment(LoginRequiredMixin, ListView):
     model = Appointment
     template_name = 'doctor_app/list_appointments.html'
+    ordering = ['a_date', 'a_time']
+
+#26
+class ListSpecialistAppointment(PermissionRequiredMixin, View):
+    permission_required = ['doctor_app.view_appointment']
+
+    def get(self, request):
+        object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('a_date', 'a_time')
+        return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
+
+    def post(self, request):
+        choice = request.POST.get("app")
+        if choice == "Actual":
+            object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id), \
+                                                     a_date__lt=datetime.date.today()).order_by('a_date', 'a_time')
+            return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
+        elif choice == 'Archive':
+            object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id),\
+                                                     a_date__gte=datetime.date.today()).order_by('a_date', 'a_time')
+            return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
+        else:
+            raise Exception('something is wrong :(')
 
 
-    def get_queryset(self):
-        object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('a_date')
-        return object_list
-
-#
-# class BaseList(ListView):
-#     model = Fundraiser
-#     template_name = 'fundraiser/fundraiser_list.html'
-#     ordering = ['-pk']
-#
-#
-# class List(BaseList):
-#     def get_queryset(self):
-#         query_set = super().get_queryset()
-#         return query_set.filter(
-#             active=True,
-#             start_date__lte=make_aware(datetime.now()),
-#             end_date__gte=make_aware(datetime.now()),
-        )

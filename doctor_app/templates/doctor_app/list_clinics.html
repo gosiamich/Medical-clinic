@@ -5,9 +5,13 @@
     {% for obj in object_list %}
         <li>
             <p><a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a> - {{ obj.address }}
+                {% if perms.doctor_app.doctor_app.change_clinic %}
                 <a href="{{ obj.get_update_url }}">Update clinic</a> </p>
+                {% endif %}
         </li>
     {% endfor %}
     </ul>
-    <p><a href="{%  url 'create_clinic' %}">Create new clinic</a></p>
+    {% if perms.doctor_app.change_clinic %}
+     <p><a href="{%  url 'create_clinic' %}">Create new clinic</a></p>
+    {% endif %}
 {% endblock %}

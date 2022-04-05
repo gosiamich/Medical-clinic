@@ -102,7 +102,7 @@ def test_add_appointment_login_get(user):
 
 @freeze_time('2022-03-31 00:00:00')
 @pytest.mark.django_db
-def test_add_appointment_post(user2, patient, clinic, specialist2, type):
+def test_add_appointment_post(schedule, user2, patient, clinic, specialist2, type):
     client = Client()
     client.force_login(user2)
     url = reverse('add_appointment')

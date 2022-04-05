@@ -1,6 +1,8 @@
 {% extends 'doctor_app/base.html' %}
 {% block zawartosc %}
 
-   Hellooo world :)
-    {{ message }}
+  <h2> Hellooo world :)</h2>
+
+
+   <h4>{{ request.session.message }}</h4>
 {% endblock %}

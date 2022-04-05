@@ -12,7 +12,7 @@
           <li>
             <a href="{% url 'modify_user' %}">Modify user</a></li>
           </li>
-          <li><a href="{% url 'p_registration' %}">Patient REGISTRATION FORM</a></li>
+          <li><a href="{% url 'p_registration' %}">REGISTRATION FORM</a></li>
           <li><a href="{%  url 'add_appointment' %}">Add appointment</a></li>
           <li><a href="{%  url 'list_clinics' %}">CLINICS</a></li>
           <li><a href="{%  url 'list_patients' %}">PATIENTS</a></li>
@@ -24,8 +24,9 @@
           <li><a href="{%  url 'list_specializations' %}">Specializations</a></li>
           <li><a href="{%  url 'list_types' %}">Appointment types</a></li>
           <li><a href="/admin/">ADMIN</a></li>
-          {% if perms.doctor_app.view_schedule %}
+          {% if perms.doctor_app.view_schedule  and perms.doctor_app.view_schedule %}
               <li><a href="{%  url 'list_specialist_schedules' %}">Specialist schedules</a>
+              <li><a href="{%  url 'list_specialist_appointments' %}">Specialist appointments</a>
           {% endif %}
 
           </ul>

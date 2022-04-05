@@ -64,12 +64,15 @@ def specialist2(address, user, specialization):
     return Specialist.objects.create(user=user, address=address, specialization=specialization,phone_number=5)
 
 @pytest.fixture
-def schedules(clinic, specialist):
+def schedules(clinic, specialist2):
     list =[]
-    sch = Schedule.objects.create(day_of_week='1', sch_to='10:00', sch_from='15:00',clinic=clinic, specialist=specialist)
+    sch = Schedule.objects.create(day_of_week='1', sch_to='10:00', sch_from='15:00',clinic=clinic, specialist=specialist2)
     list.append(sch)
     return list
 
+@pytest.fixture
+def schedule(clinic, specialist):
+    return Schedule.objects.create(day_of_week='1', sch_to='10:00', sch_from='18:00',clinic=clinic, specialist=specialist)
 
 @pytest.fixture
 def patient(user2, address):
