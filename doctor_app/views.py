@@ -385,4 +385,6 @@ class ListUserAppointment(LoginRequiredMixin, View):
         return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
 
 
+class SearchUserView(PermissionRequiredMixin,View):
+    pass
 

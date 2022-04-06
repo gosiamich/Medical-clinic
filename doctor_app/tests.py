@@ -39,7 +39,7 @@ def test_PatientRegistrationView_post():
     url = reverse('p_registration')
     date = {
         'username': 'gos',
-        'password':'goog',
+        'password':'Backend$2022',
         'first_name':'gos',
         'last_name':'mic',
         'email':'gm@p.pl',
@@ -66,7 +66,7 @@ def test_ModifyUserPatientFORM_post(user2, patient):
     url = reverse('modify_user')
     date = {
         'username': 'Gosss',
-        'password':'goog',
+        'password':'Backend$2022',
         'first_name':'gos',
         'last_name':'mic',
         'email':'gm@p.pl',
@@ -254,7 +254,7 @@ def test_CreateSpecialistView_post(superuser, specialization):
     url = reverse('create_specialist')
     data = {
         'username': 'gos2',
-        'password':'goog',
+        'password':'Backend$2022',
         'first_name':'gos',
         'last_name':'mic',
         'email':'gm@p.pl',

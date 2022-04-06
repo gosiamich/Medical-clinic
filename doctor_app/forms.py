@@ -28,10 +28,33 @@ class CreateSpecialistForm(forms.ModelForm):
         fields = ['specialization', 'phone_number']
 
 
+def PostcodeValidate(postcode):
+    s = postcode.replace(" ", "")
+    if not len(s) == 6:
+        raise ValidationError('Wrong poscode')
+    else:
+        if not s[2] == '-':
+            raise ValidationError('Wrong postcode')
+        else:
+            s = s.replace("-", "")
+            for i in range(len(s)):
+                if not(s[i].isdigit()):
+                    raise ValidationError('Wrong postcode')
+            else:
+                return True
+
+
+
 class CreateAddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = '__all__'
+
+
+    def clean_postcode(self):
+        if not PostcodeValidate(self.cleaned_data['postcode']):
+            raise ValidationError('Wrong postcode')
+        return self.cleaned_data['postcode']
 
 
 def check_date(a_date):
@@ -92,20 +115,3 @@ class AddAppointmentForm(forms.Form):
 
 
 
-
-
-
-# def check_time(day_and_time):
-#     if day_and_time < datetime.time(10, 00, 00):
-#         raise ValidationError("Clinic starts at 10:00")
-#     if day_and_time > datetime.time(18, 00, 00):
-#         raise ValidationError("Clinic ends at 18:00")
-
-
-    # day_and_time = forms.DateField(label='Choose a time for your appointment:', \
-    #                                # validators=[check_date, ckeck_weekday, ],
-    #                                widget=forms.DateTimeInput( \
-    #                                    attrs={'type': 'datetime-local'}))
-                                              # 'min': '2022-03-20T10:00:00', \
-                                              # 'max': '2022-12-30T18:00:00', \
-                                              # 'step': '1800'}))
