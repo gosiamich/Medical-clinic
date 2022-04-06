@@ -1,5 +1,5 @@
 import datetime
-from audioop import reverse
+from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
@@ -12,7 +12,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 
 from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm, CreateSpecialistForm, \
-    CreateClinicForm
+    CreateClinicForm, SearchForm
 from accounts.forms import CreateUserForm
 from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist, Address, Type, Specialization
 from django.contrib.auth.models import User
@@ -135,9 +135,8 @@ class AddAppointmentView(LoginRequiredMixin, View):
             patient_id = user.patient.id
             Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
                                                patient_id=patient_id, type=type)
-            request.session['message'] = f'Your appointment: {a_date}  at {a_time} with specialist: {specialist} in {clinic}'
-            return redirect('index')
-            # return render(request, "doctor_app/index.html", {'message': f'brawo wizyta zarezerwowana'})
+            # request.session['message'] = f'Your appointment: {a_date}  at {a_time} with specialist: {specialist} in {clinic}'
+            return redirect('list_user_appointments')
         return render(request, 'doctor_app/form.html', {'form': form})
 
 #8
@@ -386,5 +385,18 @@ class ListUserAppointment(LoginRequiredMixin, View):
 
 
 class SearchUserView(PermissionRequiredMixin,View):
-    pass
+    permission_required = ['doctor_app.view_patient']
+
+    def get(self, request):
+        form = SearchForm()
+        return render(request, 'doctor_app/form.html', {'form': form})
+
+    def post(self, request):
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search = form.cleaned_data['search']
+            object_list = Patient.objects.filter(pesel__icontains=search)
+            return render(request, 'doctor_app/list_patients.html',
+                              {'object_list':object_list})
+        return render(request, 'doctor_app/form.html', {'form': form})
 

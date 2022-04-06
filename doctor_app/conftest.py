@@ -71,8 +71,8 @@ def schedules(clinic, specialist2):
     return list
 
 @pytest.fixture
-def schedule(clinic, specialist):
-    return Schedule.objects.create(day_of_week='1', sch_to='10:00', sch_from='18:00',clinic=clinic, specialist=specialist)
+def schedule(clinic, specialist2):
+    return Schedule.objects.create(day_of_week='1', sch_to='10:00', sch_from='18:00',clinic=clinic, specialist=specialist2)
 
 @pytest.fixture
 def patient(user2, address):

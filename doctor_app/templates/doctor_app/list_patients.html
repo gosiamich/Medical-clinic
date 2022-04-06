@@ -4,6 +4,8 @@
 {{ message }}
 
     <p>PATIENTS:</p>
+
+   <p> <a href="{% url 'search_patient' %}">Search patient </a></p>
    <table>
   <tr>
       <th> <i></i>Patient ID</i> </th>
@@ -28,9 +30,11 @@
     <th> {{ obj.address }}</th>
     <th> {{ obj.user.email }} </th>
     <th> {{ obj.user.username }} (id: {{ obj.user.id }}) </th>
-{#    <th><a href="{{ obj.get_update_url }}">Update </a></th>#}
+
 
   </tr>
+
+
          {% endfor %}
 
 </table>

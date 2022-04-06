@@ -113,5 +113,6 @@ class AddAppointmentForm(forms.Form):
                         raise forms.ValidationError(errors)
 
 
-
+class SearchForm(forms.Form):
+    search = forms.CharField(label='searching word', max_length=100)
 
