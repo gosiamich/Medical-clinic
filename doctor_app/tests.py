@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.forms import Form
 from django.test import TestCase
 from django.test import Client
 import pytest
@@ -20,6 +21,14 @@ from doctor_app.models import Patient, Specialization, Specialist, Schedule, App
 def test_index():
     client = Client()
     url = reverse('index')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_aboute():
+    client = Client()
+    url = reverse('aboute')
     response = client.get(url)
     assert response.status_code == 200
 
@@ -102,7 +111,7 @@ def test_add_appointment_login_get(user):
 
 @freeze_time('2022-03-31 00:00:00')
 @pytest.mark.django_db
-def test_add_appointment_post(user2, patient, clinic, specialist2, type):
+def test_add_appointment_post(schedule, user2, patient, clinic, specialist2, type):
     client = Client()
     client.force_login(user2)
     url = reverse('add_appointment')
@@ -159,6 +168,18 @@ def test_CreateClinicView_post(superuser):
     new_url = reverse('list_clinics')
     assert response.url.startswith(new_url)
     Clinic.objects.get(name='Luxmed')
+
+
+
+@pytest.mark.django_db
+def test_ModifyUserSpecialistFORM_get_not_login(specialist):
+    client = Client()
+    url = reverse('modify_specialist')
+    response = client.get(url)
+    assert response.status_code == 302
+    url = reverse('login')
+    assert response.url.startswith(url)
+
 
 
 
@@ -714,3 +735,44 @@ def test_ListAppointment_login_superuser(specialist2, appointments, superuser):
     assert response.context['object_list'].count() == len(appointments)
     for app in appointments:
         assert app in response.context['object_list']
+
+
+@pytest.mark.django_db
+def test_ListSearchPatientView_not_login():
+    client = Client()
+    url = reverse('list_search_patient')
+    response = client.get(url)
+    assert response.status_code == 302
+    url = reverse('login')
+    assert response.url.startswith(url)
+
+
+@pytest.mark.django_db
+def test_ListSearchPatientView_login_without_perm(user2):
+    client = Client()
+    client.force_login(user2)
+    url = reverse('list_search_patient')
+    response = client.get(url)
+    assert response.status_code == 403
+
+@pytest.mark.django_db
+def test_registration_get_login_with_perm(superuser):
+    client = Client()
+    client.force_login(superuser)
+    url = reverse('list_search_patient')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'],Form)
+    assert response.context['object_list'].count() ==0
+
+
+@pytest.mark.django_db
+def test_ListSearchPatientView_login_superuser(patients, superuser):
+    client = Client()
+    client.force_login(superuser)
+    url = reverse('list_search_patient')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['object_list'].count() == len(patients)
+    for patient in patients:
+        assert patient in response.context['object_list']

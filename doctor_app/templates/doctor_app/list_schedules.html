@@ -5,7 +5,7 @@
     </br>
      <table>
   <tr>
-      <th> <i></i>day of week</i> </th>
+      <th> <i></i>Day of the week</i> </th>
       <th> clinic </th>
       <th> specialist </th>
       <th> from time </th>
@@ -14,7 +14,7 @@
       <th>Delete</th>
       {% for obj in object_list %}
   </tr>
-    <th>  {{ obj.day_of_week }} </th>
+    <th>  {{ obj.get_name_of_week }} </th>
     <th> {{ obj.clinic }}</th>
           <th> {{ obj.specialist }} </th>
           <th> {{ obj.sch_from }} </th>

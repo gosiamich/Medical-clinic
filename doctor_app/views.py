@@ -16,23 +16,24 @@ from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmen
 from accounts.forms import CreateUserForm
 from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist, Address, Type, Specialization
 from django.contrib.auth.models import User
+from django.db.models import Q
 
-# 1
+
 class Index(View):
     def get(self, request):
         return render(request, "doctor_app/index.html")
+
 
 class Aboute(View):
     def get(self, request):
         return render(request, "doctor_app/aboute.html")
 
 
-# 2
 class SuperuserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
 
-#3
+
 class PatientRegistrationView(View):
 
     def get(self, request):
@@ -56,12 +57,11 @@ class PatientRegistrationView(View):
             patient.user = user
             patient.address = address
             patient.save()
-            # message = f'Thank Yoy for registration. Now You can make an appointment'
             return redirect( 'index')
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form})
 
-#4
+
 class CreateSpecialistView(SuperuserRequiredMixin, View):
     def get(self, request):
         form = CreateUserForm()
@@ -88,7 +88,7 @@ class CreateSpecialistView(SuperuserRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form})
 
-#5
+
 class CreateClinicView(SuperuserRequiredMixin, View):
     def get(self, request):
         model_form = CreateClinicForm()
@@ -109,14 +109,14 @@ class CreateClinicView(SuperuserRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'model_form': model_form, 'address_form': address_form, 'message': 'Try again (NEW CLINIC)' })
 
-#6
+
 class CreateViewSchedule(SuperuserRequiredMixin,CreateView):
     model = Schedule
     fields = '__all__'
     success_url = reverse_lazy('list_schedules')
     template_name = 'doctor_app/create_schedule.html'
 
-#7
+
 class AddAppointmentView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -139,23 +139,18 @@ class AddAppointmentView(LoginRequiredMixin, View):
             return redirect('list_user_appointments')
         return render(request, 'doctor_app/form.html', {'form': form})
 
-#8
-class ListViewPatient(PermissionRequiredMixin, ListView):
-    permission_required = ['doctor_app.view_patient']
-    model = Patient
-    template_name = 'doctor_app/list_patients.html'
 
-#9
+
 class ListViewClinic(ListView):
     model = Clinic
     template_name = 'doctor_app/list_clinics.html'
 
-# 10
+
 class ListViewSpecialist(ListView):
     model = Specialist
     template_name = 'doctor_app/list_specialists.html'
 
-# 11
+
 class ListViewSchedule(PermissionRequiredMixin, ListView):
     permission_required = ['doctor_app.view_schedule']
     model = Schedule
@@ -163,13 +158,11 @@ class ListViewSchedule(PermissionRequiredMixin, ListView):
     ordering = ['specialist', 'day_of_week']
 
 
-
-# 13
 class DetailViewClinic(DetailView):
     model = Clinic
     template_name = 'doctor_app/detail_clinic.html'
 
-# 14
+
 class ModifyUserPatientFORM(LoginRequiredMixin, View):
     # only Patient may change its own data
     def get(self, request):
@@ -201,7 +194,7 @@ class ModifyUserPatientFORM(LoginRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
 
-# 15
+
 class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
     permission_required = ['doctor_app.change_specialist']
     # only Specialist may change its own data
@@ -234,7 +227,7 @@ class ModifyUserSpecialistFORM(PermissionRequiredMixin, View):
         return render(request, 'doctor_app/form.html',
                       {'form': form, 'model_form': model_form, 'address_form': address_form, 'message': 'Try again..'})
 
-# 16
+
 class ModifyClinicFORM(PermissionRequiredMixin, View):
     permission_required = ['doctor_app.change_clinic']
     def get(self, request, pk):
@@ -254,7 +247,7 @@ class ModifyClinicFORM(PermissionRequiredMixin, View):
             clinic.save()
             return redirect('list_clinics')
 
-# 17
+
 class UpdateViewSchedule(PermissionRequiredMixin, UpdateView):
     permission_required = ['doctor_app.change_schedule']
     model = Schedule
@@ -262,19 +255,19 @@ class UpdateViewSchedule(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy('list_schedules')
     template_name = 'doctor_app/form.html'
 
-# 18
+
 class DeleteViewSchedule(PermissionRequiredMixin, DeleteView):
     permission_required = ['doctor_app.delete_schedule']
     model = Schedule
     success_url = '/list_schedules/'
 
-# 19
+
 class DeleteViewAppointment(PermissionRequiredMixin, DeleteView):
     permission_required = ['doctor_app.delete_appointment']
     model = Appointment
     success_url = '/list_appointments/'
 
-#20
+
 class CreateViewType(PermissionRequiredMixin, CreateView):
     permission_required = ['doctor_app.add_type']
     model = Type
@@ -282,13 +275,13 @@ class CreateViewType(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy("list_types")
     template_name = 'doctor_app/create_type.html'
 
-# 21
+
 class ListViewType(PermissionRequiredMixin, ListView):
     permission_required = ['doctor_app.view_type']
     model = Type
     template_name = 'doctor_app/list_types.html'
 
-# 22
+
 class CreateViewSpecialization(PermissionRequiredMixin, CreateView):
     permission_required = ['doctor_app.add_specialization']
     model = Specialization
@@ -296,14 +289,13 @@ class CreateViewSpecialization(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy('list_specializations')
     template_name = 'doctor_app/create_specialization.html'
 
-# 23
+
 class ListViewSpecialization(PermissionRequiredMixin, ListView):
     permission_required = ['doctor_app.view_specialization']
     model = Specialization
     template_name = 'doctor_app/list_specialization.html'
 
 
-# 24
 class ListSpecialistSchedule(PermissionRequiredMixin, ListView):
     permission_required = ['doctor_app.view_schedule']
     model = Schedule
@@ -313,13 +305,12 @@ class ListSpecialistSchedule(PermissionRequiredMixin, ListView):
         object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('day_of_week')
         return object_list
 
-#25
+
 class DetailViewSpecialist(DetailView):
     model = Specialist
     template_name = 'doctor_app/detail_specialist.html'
 
 
-# 12
 class ListAppointment(SuperuserRequiredMixin, View):
 
     def get(self,request):
@@ -339,7 +330,7 @@ class ListAppointment(SuperuserRequiredMixin, View):
         return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
 
 
-#26
+
 class ListUserAppointment(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -351,7 +342,6 @@ class ListUserAppointment(LoginRequiredMixin, View):
             object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id)). \
                 order_by('a_date', 'a_time')
         return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
-
 
 
     def post(self, request):
@@ -384,19 +374,28 @@ class ListUserAppointment(LoginRequiredMixin, View):
         return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
 
 
-class SearchUserView(PermissionRequiredMixin,View):
+class ListViewPatient(PermissionRequiredMixin, ListView):
     permission_required = ['doctor_app.view_patient']
+    model = Patient
+    template_name = 'doctor_app/list_patients.html'
+
+
+class ListSearchPatientView(SuperuserRequiredMixin,View):
 
     def get(self, request):
         form = SearchForm()
-        return render(request, 'doctor_app/form.html', {'form': form})
+        object_list = Patient.objects.all()
+        return render(request, 'doctor_app/search_form.html', {'form': form, 'object_list':object_list})
 
     def post(self, request):
         form = SearchForm(request.POST)
         if form.is_valid():
             search = form.cleaned_data['search']
-            object_list = Patient.objects.filter(pesel__icontains=search)
-            return render(request, 'doctor_app/list_patients.html',
-                              {'object_list':object_list})
+            object_list = Patient.objects.filter( Q(pesel__icontains=search)\
+                                                 | Q(user__username__icontains=search)\
+                                                    | Q(user__last_name__icontains=search)\
+                                                    | Q(user__first_name__icontains=search))
+            return render(request, 'doctor_app/search_form.html',
+                              {'form': form,'object_list':object_list})
         return render(request, 'doctor_app/form.html', {'form': form})
 

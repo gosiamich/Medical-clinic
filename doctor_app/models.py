@@ -83,11 +83,11 @@ class Clinic(models.Model):
 
 
 WEEK_DAY = (
-    (1, 'Poniedziałek'),
-    (2, 'Wtorek'),
-    (3, 'Środa'),
-    (4, 'Czwartek'),
-    (5, 'Piątek'),
+    (1, 'Monday'),
+    (2, 'Tuesday'),
+    (3, 'Wednesday'),
+    (4, 'Thursday'),
+    (5, 'Friday'),
 )
 
 
@@ -153,15 +153,6 @@ TIME_SLOT = (
     )
 
 
-class Visit(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    specialist = models.ForeignKey(Specialist, on_delete=models.CASCADE)
-    type = models.ForeignKey(Type, on_delete=models.CASCADE)
-    v_date = models.DateField()
-    time_slot = models.IntegerField(choices=TIME_SLOT)
 
-
-    class Meta:
-        unique_together = ['specialist', 'v_date', 'time_slot']
 
 

@@ -7,7 +7,7 @@ from django.forms import DateTimeField
 from django.forms.widgets import DateTimeInput
 from numpy import sort
 
-from doctor_app.models import Patient, Address, Clinic, Specialist, Type, TIME_SLOT, Visit, Schedule, Appointment
+from doctor_app.models import Patient, Address, Clinic, Specialist, Type, TIME_SLOT, Schedule, Appointment
 
 
 class CreatePatientForm(forms.ModelForm):
@@ -111,8 +111,9 @@ class AddAppointmentForm(forms.Form):
                             list_busy_time.append(time_format)
                         errors.append(f'specjalista ma zajęte godziny: {sort(list_busy_time)})')
                         raise forms.ValidationError(errors)
+        return data
 
 
 class SearchForm(forms.Form):
-    search = forms.CharField(label='searching word', max_length=100)
+    search = forms.CharField(label='', max_length=100)
 

@@ -1,12 +1,13 @@
 {% extends 'doctor_app/base.html' %}
 {% block zawartosc %}
+    <form method="post">
+     {% csrf_token %}
 
-{{ message }}
+    {{ form }}    <input type="submit" value="Search patient">
+    </form>
 
-    <p>PATIENTS:</p>
 
-   <p> <a href="{% url 'list_search_patient' %}">Search patient </a></p>
-   <table>
+<table>
   <tr>
       <th> <i></i>Patient ID</i> </th>
       <th> First name </th>
@@ -17,10 +18,9 @@
       <th>Addrress</th>
       <th> Email </th>
       <th>User name</th>
-{#      <th>Update</th>#}
-
-          {% for obj in object_list %}
   </tr>
+  {% for obj in object_list %}
+  <tr>
     <th> {{ obj.id }}</th>
     <th> {{ obj.user.first_name }}</th>
     <th> {{ obj.user.last_name }}</th>
@@ -30,12 +30,8 @@
     <th> {{ obj.address }}</th>
     <th> {{ obj.user.email }} </th>
     <th> {{ obj.user.username }} (id: {{ obj.user.id }}) </th>
-
-
   </tr>
-
-
-         {% endfor %}
+  {% endfor %}
 
 </table>
 {% endblock %}
