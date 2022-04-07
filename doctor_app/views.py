@@ -302,8 +302,12 @@ class ListSpecialistSchedule(PermissionRequiredMixin, ListView):
     template_name = 'doctor_app/list_schedules.html'
 
     def get_queryset(self):
-        object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('day_of_week')
+        if len(Specialist.objects.filter(user=self.request.user.id)) == 0:
+            object_list = Schedule.objects.all().order_by('day_of_week')
+        else:
+            object_list = Schedule.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)).order_by('day_of_week')
         return object_list
+
 
 
 class DetailViewSpecialist(DetailView):
@@ -343,33 +347,21 @@ class ListUserAppointment(LoginRequiredMixin, View):
                 order_by('a_date', 'a_time')
         return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
 
-
     def post(self, request):
         choice = request.POST.get("app")
         specialist = Specialist.objects.filter(user=self.request.user.id)
+        patient = Patient.objects.get(user=self.request.user.id)
         if len(specialist) > 0:
-            if choice == "Actual":
-                object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id), \
-                                                     a_date__gte=datetime.date.today()).order_by('a_date', 'a_time')
-            elif choice == 'Archival':
-                object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id),\
-                                                         a_date__lt=datetime.date.today()).order_by('a_date', 'a_time')
-            elif choice == 'All':
-                object_list = Appointment.objects.filter(specialist=Specialist.objects.get(user=self.request.user.id)). \
-                                                                                            order_by('a_date', 'a_time')
-            else:
-                raise Exception('something is wrong :(')
+            appointments = Appointment.objects.filter(specialist=specialist).order_by('a_date', 'a_time')
         else:
-            if choice == "Actual":
-                object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id), \
-                                                     a_date__gte=datetime.date.today()).order_by('a_date', 'a_time')
-            elif choice == 'Archival':
-                object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id),\
-                                                         a_date__lt=datetime.date.today()).order_by('a_date', 'a_time')
-            elif choice == 'All':
-                object_list = Appointment.objects.filter(patient=Patient.objects.get(user=self.request.user.id)). \
-                                                                                            order_by('a_date', 'a_time')
-            else:
+            appointments = Appointment.objects.filter(patien=patient).order_by('a_date', 'a_time')
+        if choice == "Actual":
+            object_list = appointments.filter(a_date__gte=datetime.date.today())
+        elif choice == 'Archival':
+            object_list = appointments.filter(a_date__lt=datetime.date.today())
+        elif choice == 'All':
+            object_list = appointments
+        else:
                 raise Exception('something is wrong :(')
         return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
 

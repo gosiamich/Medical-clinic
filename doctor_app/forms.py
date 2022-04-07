@@ -86,21 +86,21 @@ class AddAppointmentForm(forms.Form):
         if not 'a_date' in data:
             return data
         if data['a_date'] == datetime.date.today() and data['a_time'] < datetime.datetime.now().time():
-            errors.append('podaj godzinę późnejszą niz aktualna!')
+            errors.append('cchoose an hour from the future!')
             raise forms.ValidationError(errors)
         if len(Schedule.objects.filter(clinic=data['clinic'], specialist=data['specialist']))==0:
-            errors.append('specjalista w tej przychodni nie przyjmuje!')
+            errors.append('the specialist at this clinic does not work!')
             raise forms.ValidationError(errors)
         else:
             if len(Schedule.objects.filter(clinic=data['clinic'], specialist=data['specialist'],
                                        day_of_week=data['a_date'].isoweekday())) == 0:
-                errors.append('specjalista w tym dniu nie przyjmuje!')
+                errors.append('the specialist does not work on this day!')
                 raise forms.ValidationError(errors)
             else:
                 if len(Schedule.objects.filter(clinic=data['clinic'], specialist=data['specialist'],
                                        day_of_week=data['a_date'].isoweekday(),\
                                         sch_from__lte=data['a_time'], sch_to__gt=data['a_time'])) == 0:
-                    errors.append('specjalista w tym dniu o tej godzinie nie przyjmuje!')
+                    errors.append('the specialist does not work at this time on this day!')
                     raise forms.ValidationError(errors)
                 else:
                     if len(Appointment.objects.filter(a_date=data['a_date'], a_time=data['a_time'],
@@ -109,7 +109,7 @@ class AddAppointmentForm(forms.Form):
                         for a in Appointment.objects.filter(a_date=data['a_date'], specialist=data['specialist']):
                             time_format = a.a_time.strftime("%H:%M")
                             list_busy_time.append(time_format)
-                        errors.append(f'specjalista ma zajęte godziny: {sort(list_busy_time)})')
+                        errors.append(f'the specialist has busy hours: {sort(list_busy_time)})')
                         raise forms.ValidationError(errors)
         return data
 
