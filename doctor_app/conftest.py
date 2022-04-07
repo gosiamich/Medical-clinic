@@ -27,12 +27,14 @@ def user():
     user.user_permissions.add(mc)
     va = Permission.objects.get(codename='view_appointment')
     user.user_permissions.add(va)
+    mspec= Permission.objects.get(codename='change_specialist')
+    user.user_permissions.add(mspec)
     return user
 
 
 @pytest.fixture
 def user2():
-    return User.objects.create_user(username='user2', password='gosia', first_name = 'Spec')
+    return User.objects.create_user(username='user2', password='Backend$2022')
 
 @pytest.fixture
 def superuser():

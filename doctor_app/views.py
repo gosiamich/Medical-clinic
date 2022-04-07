@@ -1,16 +1,10 @@
 import datetime
-from django.urls import reverse
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.utils.datetime_safe import date
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
-
 from doctor_app.forms import CreatePatientForm, CreateAddressForm, AddAppointmentForm, CreateSpecialistForm, \
     CreateClinicForm, SearchForm
 from accounts.forms import CreateUserForm
@@ -118,7 +112,6 @@ class CreateViewSchedule(SuperuserRequiredMixin,CreateView):
 
 
 class AddAppointmentView(LoginRequiredMixin, View):
-
     def get(self, request):
         form = AddAppointmentForm()
         return render(request, 'doctor_app/form.html', {'form': form})
@@ -135,10 +128,8 @@ class AddAppointmentView(LoginRequiredMixin, View):
             patient_id = user.patient.id
             Appointment.objects.create(a_date=a_date, a_time=a_time, specialist=specialist, clinic=clinic,
                                                patient_id=patient_id, type=type)
-            # request.session['message'] = f'Your appointment: {a_date}  at {a_time} with specialist: {specialist} in {clinic}'
             return redirect('list_user_appointments')
         return render(request, 'doctor_app/form.html', {'form': form})
-
 
 
 class ListViewClinic(ListView):
@@ -309,14 +300,12 @@ class ListSpecialistSchedule(PermissionRequiredMixin, ListView):
         return object_list
 
 
-
 class DetailViewSpecialist(DetailView):
     model = Specialist
     template_name = 'doctor_app/detail_specialist.html'
 
 
 class ListAppointment(SuperuserRequiredMixin, View):
-
     def get(self,request):
         object_list = Appointment.objects.all().order_by('a_date', 'a_time')
         return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
@@ -334,9 +323,7 @@ class ListAppointment(SuperuserRequiredMixin, View):
         return render(request, 'doctor_app/list_appointments.html', {'object_list': object_list})
 
 
-
 class ListUserAppointment(LoginRequiredMixin, View):
-
     def get(self, request):
         specialist = Specialist.objects.filter(user=self.request.user.id)
         if len(specialist) >0:
@@ -349,9 +336,9 @@ class ListUserAppointment(LoginRequiredMixin, View):
 
     def post(self, request):
         choice = request.POST.get("app")
-        specialist = Specialist.objects.filter(user=self.request.user.id)
+        specialist = Specialist.objects.get(user=self.request.user.id)
         patient = Patient.objects.get(user=self.request.user.id)
-        if len(specialist) > 0:
+        if not specialist :
             appointments = Appointment.objects.filter(specialist=specialist).order_by('a_date', 'a_time')
         else:
             appointments = Appointment.objects.filter(patien=patient).order_by('a_date', 'a_time')
@@ -362,7 +349,7 @@ class ListUserAppointment(LoginRequiredMixin, View):
         elif choice == 'All':
             object_list = appointments
         else:
-                raise Exception('something is wrong :(')
+            raise Exception('something is wrong :(')
         return render(request, 'doctor_app/list_appointments.html',{'object_list': object_list})
 
 
@@ -373,7 +360,6 @@ class ListViewPatient(PermissionRequiredMixin, ListView):
 
 
 class ListSearchPatientView(SuperuserRequiredMixin,View):
-
     def get(self, request):
         form = SearchForm()
         object_list = Patient.objects.all()

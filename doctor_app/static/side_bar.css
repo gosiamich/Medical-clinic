@@ -135,3 +135,7 @@ table, th, td {
     padding: 5px;
     line-height: 35px;
 }
+
+ div .div_a {
+    line-height: 5px;
+}
