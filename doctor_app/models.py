@@ -41,7 +41,6 @@ class Patient(models.Model):
         return reverse('detail_patient', args=(self.id,))
 
 
-
 class Specialist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE)
@@ -90,6 +89,8 @@ WEEK_DAY = (
     (5, 'Friday'),
 )
 
+HOURS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', \
+             '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00']
 
 class Schedule(models.Model):
     specialist = models.ForeignKey(Specialist, on_delete=models.CASCADE)
@@ -107,9 +108,13 @@ class Schedule(models.Model):
     def get_name_of_week(self):
         return [y for x,y in WEEK_DAY if x == self.day_of_week][0]
 
+    def get_schedule_hours(self):
+        start = HOURS.index(self.sch_from.strftime("%H:%M"))
+        end = HOURS.index(str(self.sch_to.strftime("%H:%M")))
+        return HOURS[start:end]
+
     class Meta:
         unique_together = ['specialist', 'clinic', 'day_of_week']
-
 
 
 class Type(models.Model):
@@ -139,7 +144,6 @@ class Appointment(models.Model):
         unique_together = ['specialist', 'a_date', 'a_time', 'clinic']
 
 
-
 TIME_SLOT = (
         (0, '09:00 – 09:30'),
         (1, '10:00 – 10:30'),
@@ -151,6 +155,7 @@ TIME_SLOT = (
         (7, '16:00 – 16:30'),
         (8, '17:00 – 17:30'),
     )
+
 
 
 
