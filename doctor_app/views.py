@@ -19,7 +19,7 @@ def weather():
     city = 'Poznań'
     city_weather = requests.get(url.format(city, API_KEY)).json()
     print(city_weather)
-    temperature = round(5 / 9 * (float(city_weather['main']['temp']) - 32), 0)
+    temperature = round(5 / 9 * (city_weather['main']['temp'] - 32), 0)
     weather = {
         'city': city,
         'temperature': temperature,
