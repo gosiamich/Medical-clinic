@@ -85,7 +85,7 @@ class AddAppointmentForm(forms.Form):
         if not 'a_date' in data:
             return data
         if data['a_date'] == datetime.date.today() and data['a_time'] < datetime.datetime.now().time():
-            errors.append('cchoose an hour from the future!')
+            errors.append('choose an hour from the future!')
             raise forms.ValidationError(errors)
         if len(Schedule.objects.filter(clinic=data['clinic'], specialist=data['specialist']))==0:
             errors.append('the specialist at this clinic does not work!')

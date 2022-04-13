@@ -55,5 +55,5 @@ urlpatterns = [
     path('list_specialist_schedules/', ListSpecialistSchedule.as_view(), name='list_specialist_schedules'),
     path('detail_specialist/<int:pk>/', DetailViewSpecialist.as_view(), name='detail_specialist'),
     path('list_specialist_appointments/',ListUserAppointment.as_view(), name='list_user_appointments'),
-    path('search_patient/', ListSearchPatientView.as_view(), name='list_search_patient')
+    path('search_patient/', ListSearchPatientView.as_view(), name='list_search_patient'),
 ]

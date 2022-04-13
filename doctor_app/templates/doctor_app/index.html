@@ -1,8 +1,9 @@
 {% extends 'doctor_app/base.html' %}
 {% block zawartosc %}
-
+  <h4> <strong>{{ weather.city}}</strong>
+       <span class="subtitle">{{ weather.temperature }}° C</span></h4>
   <h2> Hellooo world :)</h2>
 {{ message }}
 
-   <h4>{{ request.session.message }}</h4>
+
 {% endblock %}

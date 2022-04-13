@@ -11,3 +11,6 @@ DATABASES = {
         'PORT': 5432
     }
 }
+
+
+API_KEY = '6b268b37ccc6c82d7fa5e88f6498fcb0'

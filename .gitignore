@@ -1,4 +1,6 @@
-.doctor/local_settings.py
 local_settings.py
 my.py
 db.sqlite3
+.idea
+.pytest_cache
+

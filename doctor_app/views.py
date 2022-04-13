@@ -1,6 +1,7 @@
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+import requests
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -11,16 +12,30 @@ from accounts.forms import CreateUserForm
 from doctor_app.models import Appointment, Schedule, Patient, Clinic, Specialist, Address, Type, Specialization
 from django.contrib.auth.models import User
 from django.db.models import Q
+from doctor.local_settings import API_KEY
 
+def weather():
+    url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid={}'
+    city = 'Poznań'
+    city_weather = requests.get(url.format(city, API_KEY)).json()
+    print(city_weather)
+    temperature = round(5 / 9 * (float(city_weather['main']['temp']) - 32), 0)
+    weather = {
+        'city': city,
+        'temperature': temperature,
+        'description': city_weather['weather'][0]['description'],
+        'icon': city_weather['weather'][0]['icon']
+    }
+    return weather
 
 class Index(View):
     def get(self, request):
-        return render(request, "doctor_app/index.html")
+        return render(request, "doctor_app/index.html", {'weather': weather()})
 
 
 class Aboute(View):
     def get(self, request):
-        return render(request, "doctor_app/aboute.html")
+        return render(request, "doctor_app/aboute.html", {'weather': weather()})
 
 
 class SuperuserRequiredMixin(UserPassesTestMixin):
