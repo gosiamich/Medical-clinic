@@ -11,5 +11,5 @@ DATABASES = {
         'PORT': 5432
     }
 }
-
+Secret_key = 'your key'
 API_KEY = 'enter Your api key for openweathermap
