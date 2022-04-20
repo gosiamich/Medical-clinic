@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r_pw+q6l5t1f-3z@li-pj)!vx2(f*#(m0)euxcyv4p10z0qxpg'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -80,10 +80,9 @@ WSGI_APPLICATION = 'doctor.wsgi.application'
 
 
 try:
-    from doctor.local_settings import DATABASES
+    from doctor.local_settings import DATABASES, SECRET_KEY, API_KEY
 except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
+    print("Configure local_settings.py!")
     exit(0)
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
