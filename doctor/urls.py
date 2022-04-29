@@ -21,7 +21,7 @@ from doctor_app.views import Index, Aboute, PatientRegistrationView, AddAppointm
     ListAppointment, DeleteViewAppointment, CreateViewSchedule, UpdateViewSchedule, DeleteViewSchedule,\
     CreateSpecialistView, CreateClinicView, ModifyClinicFORM, ModifyUserPatientFORM, ModifyUserSpecialistFORM,\
     CreateViewType, CreateViewSpecialization, ListViewType, ListViewSpecialization, ListSpecialistSchedule,\
-    DetailViewSpecialist, ListUserAppointment, ListSearchPatientView
+    DetailViewSpecialist, ListUserAppointment, ListSearchPatientView, Appointmennts_paginator
 
 
 urlpatterns = [
@@ -56,4 +56,5 @@ urlpatterns = [
     path('detail_specialist/<int:pk>/', DetailViewSpecialist.as_view(), name='detail_specialist'),
     path('list_specialist_appointments/',ListUserAppointment.as_view(), name='list_user_appointments'),
     path('search_patient/', ListSearchPatientView.as_view(), name='list_search_patient'),
+    path('list_appointmenst_page/', Appointmennts_paginator.as_view(), name='appointmennts_paginator')
 ]

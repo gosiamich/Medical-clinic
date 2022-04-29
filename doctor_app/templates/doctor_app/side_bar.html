@@ -25,6 +25,7 @@
           <li><a href="{%  url 'list_schedules' %}">Schedules</a></li>
           <li><a href="{%  url 'list_appointments' %}">Appointments</a></li>
           <li><a href="{%  url 'create_schedule' %}">New schedule</a></li>
+          <li><a href="{%  url 'appointmennts_paginator' %}">Appointments pages</a></li>
           {% endif %}
           {% if perms.doctor_app.view_schedule  and perms.doctor_app.view_schedule %}
               <li><a href="{%  url 'list_specialist_schedules' %}">Specialist schedules</a>

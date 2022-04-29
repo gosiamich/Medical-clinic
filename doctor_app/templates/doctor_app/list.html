@@ -1,0 +1,61 @@
+{% extends 'doctor_app/base.html' %}
+{% block zawartosc %}
+
+{{ message }}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <p>Choose APPOINTMENTS:</p>
+        <p>
+        <input type="submit" name="app" value="All">
+        <input type="submit" name="app" value="Actual">
+        <input type="submit" name="app" value="Archival">
+      </p>
+</form>
+
+
+   <table>
+  <tr>
+      <th> Date</th>
+      <th> Time </th>
+      <th> Patient </th>
+      <th>Specialist</th>
+      <th>Type</th>
+      <th>Clinic</th>
+  {% if perms.doctor_app.change_appointment %}
+      <th>Delete</th>
+  {% endif %}
+
+          {% for obj in appointments %}
+  </tr>
+    <th> {{ obj.a_date}}</th>
+    <th> {{ obj.a_time}}</th>
+    <th> {{ obj.patient }}</th>
+    <th> {{ obj.specialist }}</th>
+    <th> {{ obj.type }}</th>
+    <th> {{ obj.clinic }}</th>
+    {% if perms.doctor_app.change_appointment %}
+    <th><a href="{{ obj.get_delete_url }}">Delete </a></th>
+              {% endif %}
+  </tr>
+         {% endfor %}
+
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if appointments.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ appointments.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ appointments.number }} of {{ appointments.paginator.num_pages }}.
+        </span>
+
+        {% if appointments.has_next %}
+            <a href="?page={{ appointments.next_page_number }}">next</a>
+            <a href="?page={{ appointments.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

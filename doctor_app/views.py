@@ -2,6 +2,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 import requests
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -392,3 +393,10 @@ class ListSearchPatientView(SuperuserRequiredMixin,View):
                               {'form': form,'object_list':object_list})
         return render(request, 'doctor_app/form.html', {'form': form})
 
+class Appointmennts_paginator(View):
+    def get(self, request):
+        appointments_list = Appointment.objects.all()
+        paginator = Paginator(appointments_list, 5)
+        page = request.GET.get('page')
+        appointments = paginator.get_page(page)
+        return render(request, 'doctor_app/list.html', {'appointments': appointments})
