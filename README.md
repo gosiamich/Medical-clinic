@@ -1,6 +1,6 @@
-# Medical-clinic - Application built with Python and Django  let users make a medical visit with chosen specialist in a chosen clinic.
-Bootcamp: Python Developer at Coders Lab Szkoła IT - final project
-
+"Medical-clinic"
+Application built with Python and Django created as a final project after Python Developer Course at Coders La szkoła IT.
+Application let users make a medical visit with chosen specialist in a chosen clinic.
 
 Database structure:
 
